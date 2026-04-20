@@ -47,3 +47,5 @@ app.listen(PORT, () => {
     console.log(`🚀 Demo Server running on port ${PORT}`);
     console.log('💡 No Database required - using Local Memory Store');
 });
+
+module.exports = app;
