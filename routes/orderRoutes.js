@@ -1,12 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const Order = require('../models/Order');
+const localStore = require('../localStore');
 const { protect } = require('../middleware/auth');
 
 router.post('/', protect, async (req, res) => {
   try {
     const { products, totalAmount, paymentMethod } = req.body;
-    const order = await Order.create({ userId: req.user._id, products, totalAmount, paymentMethod });
+    const order = await localStore.createOrder({ userId: req.user._id, products, totalAmount, paymentMethod });
     res.status(201).json(order);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -15,9 +15,7 @@ router.post('/', protect, async (req, res) => {
 
 router.get('/', protect, async (req, res) => {
   try {
-    const orders = await Order.find(req.user.role === 'admin' ? {} : { userId: req.user._id })
-      .populate('products.product')
-      .sort('-createdAt');
+    const orders = await localStore.getOrdersByUser(req.user._id, req.user.role);
     res.json(orders);
   } catch (error) {
     res.status(500).json({ message: error.message });

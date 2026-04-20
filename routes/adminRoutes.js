@@ -1,13 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const User = require('../models/User');
+const localStore = require('../localStore');
 const { protect, authorize } = require('../middleware/auth');
 
 router.use(protect, authorize('admin'));
 
 router.get('/farmers', async (req, res) => {
   try {
-    const farmers = await User.find({ role: 'farmer' }).select('-password');
+    const farmers = localStore.users.filter(u => u.role === 'farmer');
     res.json(farmers);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -16,7 +16,7 @@ router.get('/farmers', async (req, res) => {
 
 router.put('/approve-farmers/:id', async (req, res) => {
   try {
-    const user = await User.findByIdAndUpdate(req.params.id, { isApproved: true }, { new: true });
+    const user = await localStore.approveFarmer(req.params.id);
     res.json(user);
   } catch (error) {
     res.status(500).json({ message: error.message });
