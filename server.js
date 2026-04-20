@@ -26,9 +26,22 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/ai', aiRoutes);
 
-// SPA Fallback
+// Health Check
+app.get('/health', (req, res) => res.status(200).json({ status: 'ok' }));
+
+// SPA Fallback (Middleware style for Express 5 compatibility)
 app.use((req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+// Global Error Handler
+app.use((err, req, res, next) => {
+  console.error('🔥 Global Error:', err.stack);
+  const statusCode = err.statusCode || 500;
+  res.status(statusCode).json({
+    message: err.message || 'Internal Server Error',
+    stack: process.env.NODE_ENV === 'development' ? err.stack : null
+  });
 });
 
 

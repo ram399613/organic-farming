@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:5500/api';
+const API_URL = '/api';
 
 const app = {
     cart: JSON.parse(localStorage.getItem('cart')) || [],
@@ -344,10 +344,11 @@ const app = {
         this.showLoading(true);
         try {
             const totalAmount = this.cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+            const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
             const res = await fetch(`${API_URL}/orders`, {
                 method: 'POST', 
                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${this.token}` },
-                body: JSON.stringify({ products: this.cart, totalAmount })
+                body: JSON.stringify({ products: this.cart, totalAmount, paymentMethod })
             });
             if(!res.ok) throw new Error('Checkout failed');
 
@@ -408,14 +409,18 @@ const app = {
             document.getElementById('orders-list').innerHTML = orders.length === 0 ? 
                 '<div class="panel" style="text-align:center"><p>You haven\'t placed any orders yet.</p></div>' :
                 orders.map((o, i) => `
-                    <div class="glass panel glass-hover reveal stagger-${(i % 5) + 1}" style="display:flex; justify-content:space-between; margin-bottom:1rem;">
+                    <div class="glass panel glass-hover reveal stagger-${(i % 5) + 1}" style="display:flex; justify-content:space-between; margin-bottom:1rem; border-left: 4px solid var(--primary);">
                         <div>
-                            <h4 style="color:var(--primary)">ID: ${o._id.substring(o._id.length - 8).toUpperCase()}</h4>
-                            <p style="font-size:0.9rem; color:var(--text-muted)">Placed on ${new Date(o.createdAt || Date.now()).toLocaleDateString()}</p>
+                            <h4 style="color:var(--primary)">Order #${o._id.substring(o._id.length - 6).toUpperCase()}</h4>
+                            <p style="font-size:0.9rem; color:var(--text-muted)">📅 ${new Date(o.createdAt || Date.now()).toLocaleDateString()}</p>
+                            <p style="font-size:0.9rem; margin-top:0.5rem;">💳 Method: <strong>${o.paymentMethod || 'COD'}</strong></p>
+                            <div style="margin-top: 0.5rem; font-size: 0.8rem;">
+                                ${o.products.map(p => `<span>${p.product?.name || 'Item'} (x${p.quantity})</span>`).join(', ')}
+                            </div>
                         </div>
                         <div style="text-align:right">
-                            <p class="price" style="font-size:1.1rem">₹${o.totalAmount}</p>
-                            <span style="font-size:0.8rem; padding:4px 10px; border-radius:20px; background: rgba(16, 185, 129, 0.1); border:1px solid var(--primary)">${o.status.toUpperCase()}</span>
+                            <p class="price" style="font-size:1.2rem; margin-bottom: 0.5rem;">₹${o.totalAmount}</p>
+                            <span style="font-size:0.8rem; padding:6px 12px; border-radius:20px; background: rgba(16, 185, 129, 0.1); border:1px solid var(--primary); font-weight: 600;">${o.status.toUpperCase()}</span>
                         </div>
                     </div>
                 `).join('');

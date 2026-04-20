@@ -5,8 +5,8 @@ const { protect } = require('../middleware/auth');
 
 router.post('/', protect, async (req, res) => {
   try {
-    const { products, totalAmount } = req.body;
-    const order = await Order.create({ userId: req.user._id, products, totalAmount });
+    const { products, totalAmount, paymentMethod } = req.body;
+    const order = await Order.create({ userId: req.user._id, products, totalAmount, paymentMethod });
     res.status(201).json(order);
   } catch (error) {
     res.status(500).json({ message: error.message });

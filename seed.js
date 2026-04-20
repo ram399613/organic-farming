@@ -5,7 +5,7 @@ const Product = require('./models/Product');
 
 const seedDB = async () => {
   try {
-    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/premium_organic');
+    await mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/premium_organic');
 
     await User.deleteMany();
     await Product.deleteMany();
@@ -38,6 +38,8 @@ const seedDB = async () => {
       { name: 'Organic Mangoes', description: 'Tropical sweet mangoes', price: 350, category: 'Fruits', location: 'Florida', farmerId: farmer1._id, imageUrl: 'https://images.unsplash.com/photo-1553279768-865429fa0078?w=600' },
       { name: 'Sweet Cherries', description: 'Dark sweet cherries', price: 400, category: 'Fruits', location: 'Washington', farmerId: farmer2._id, imageUrl: 'https://images.unsplash.com/photo-1528821128474-27f963b062bf?w=600' },
       { name: 'Golden Pineapples', description: 'Ripe and ready pineapples', price: 280, category: 'Fruits', location: 'Hawaii', farmerId: farmer1._id, imageUrl: 'https://images.unsplash.com/photo-1550258987-190a2d41a8ba?w=600' },
+      { name: 'Organic Dragonfruit', description: 'Exotic pitaya fruit', price: 450, category: 'Fruits', location: 'Vietnam', farmerId: farmer1._id, imageUrl: 'https://images.unsplash.com/photo-1527325511917-0ec997672191?w=600' },
+      { name: 'Desert Watermelon', description: 'Sugar-sweet organic watermelon', price: 220, category: 'Fruits', location: 'Arizona', farmerId: farmer2._id, imageUrl: 'https://images.unsplash.com/photo-1589927986089-35812388d1f4?w=600' },
       
       // Vegetables
       { name: 'Fresh Carrots', description: 'Crunchy organic carrots', price: 60, category: 'Vegetables', location: 'Texas', farmerId: farmer1._id, imageUrl: 'https://images.unsplash.com/photo-1598170845058-32b9d6a5da37?w=600' },
@@ -50,6 +52,8 @@ const seedDB = async () => {
       { name: 'Organic Potatoes', description: 'Earthy organic potatoes', price: 70, category: 'Vegetables', location: 'Idaho', farmerId: farmer1._id, imageUrl: 'https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=600' },
       { name: 'Fresh Spinach', description: 'Green tender spinach', price: 85, category: 'Vegetables', location: 'California', farmerId: farmer2._id, imageUrl: 'https://images.unsplash.com/photo-1576045057995-568f588f82fb?w=600' },
       { name: 'Sweet Potatoes', description: 'Rich orange sweet potatoes', price: 95, category: 'Vegetables', location: 'North Carolina', farmerId: farmer1._id, imageUrl: 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=600' },
+      { name: 'Purple Eggplant', description: 'Smooth organic eggplant', price: 110, category: 'Vegetables', location: 'New Jersey', farmerId: farmer2._id, imageUrl: 'https://images.unsplash.com/photo-1590301157890-4810ed352733?w=600' },
+      { name: 'Snap Peas', description: 'Crisp sweet snap peas', price: 130, category: 'Vegetables', location: 'Colorado', farmerId: farmer1._id, imageUrl: 'https://images.unsplash.com/photo-1587313886566-a36729013f99?w=600' },
 
       // Grains
       { name: 'Whole Wheat Grains', description: 'Premium whole wheat', price: 200, category: 'Grains', location: 'Kansas', farmerId: farmer1._id, imageUrl: 'https://images.unsplash.com/photo-1574323347407-15e3df50f38b?w=600' },
@@ -58,6 +62,8 @@ const seedDB = async () => {
       { name: 'Organic Oats', description: 'Rich cut whole oats', price: 180, category: 'Grains', location: 'Iowa', farmerId: farmer2._id, imageUrl: 'https://images.unsplash.com/photo-1506084868230-bb9d95c24759?w=600' },
       { name: 'Pearl Barley', description: 'Organically grown barley', price: 220, category: 'Grains', location: 'Montana', farmerId: farmer1._id, imageUrl: 'https://images.unsplash.com/photo-1574323347407-15e3df50f38b?w=600' },
       { name: 'Organic Cornmeal', description: 'Finely ground organic corn', price: 160, category: 'Grains', location: 'Illinois', farmerId: farmer2._id, imageUrl: 'https://images.unsplash.com/photo-1551754655-cd27e38d2076?w=600' },
+      { name: 'Red Lentils', description: 'Protein-packed organic lentils', price: 140, category: 'Grains', location: 'North Dakota', farmerId: farmer1._id, imageUrl: 'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=600' },
+      { name: 'Chia Seeds', description: 'Organic superfood chia seeds', price: 600, category: 'Grains', location: 'Mexico', farmerId: farmer2._id, imageUrl: 'https://images.unsplash.com/photo-1553531384-cc64ac80f931?w=600' },
 
       // Dairy
       { name: 'Raw Farm Milk', description: 'Fresh unpasteurized milk', price: 80, category: 'Dairy', location: 'Wisconsin', farmerId: farmer2._id, imageUrl: 'https://images.unsplash.com/photo-1563636619-e9143da7973b?w=600' },
@@ -66,6 +72,8 @@ const seedDB = async () => {
       { name: 'Greek Yogurt', description: 'Thick organic yogurt', price: 150, category: 'Dairy', location: 'New York', farmerId: farmer1._id, imageUrl: 'https://images.unsplash.com/photo-1488477181946-6428a0291777?w=600' },
       { name: 'Farm Fresh Eggs', description: 'Free-range organic eggs', price: 210, category: 'Dairy', location: 'Pennsylvania', farmerId: farmer2._id, imageUrl: 'https://images.unsplash.com/photo-1587486913049-53fc88980cfc?w=600' },
       { name: 'Goat Cheese', description: 'Soft organic goat cheese', price: 380, category: 'Dairy', location: 'California', farmerId: farmer1._id, imageUrl: 'https://images.unsplash.com/photo-1618164435735-414d3b060ce4?w=600' },
+      { name: 'Organic Ghee', description: 'Clarified grass-fed butter', price: 550, category: 'Dairy', location: 'India', farmerId: farmer2._id, imageUrl: 'https://images.unsplash.com/photo-1563636619-e9143da7973b?w=600' },
+      { name: 'Mozzarella Ball', description: 'Fresh organic mozzarella', price: 340, category: 'Dairy', location: 'Italy', farmerId: farmer1._id, imageUrl: 'https://images.unsplash.com/photo-1589985270826-4b7bb135f783?w=600' },
 
       // Herbs
       { name: 'Fresh Basil', description: 'Aromatic fresh basil', price: 50, category: 'Herbs', location: 'California', farmerId: farmer2._id, imageUrl: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?w=600' },
@@ -74,6 +82,8 @@ const seedDB = async () => {
       { name: 'Organic Thyme', description: 'Earthy organic thyme', price: 55, category: 'Herbs', location: 'Washington', farmerId: farmer1._id, imageUrl: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?w=600' },
       { name: 'Italian Parsley', description: 'Flat-leaf organic parsley', price: 45, category: 'Herbs', location: 'California', farmerId: farmer2._id, imageUrl: 'https://images.unsplash.com/photo-1600857544200-b2f666a9a2ec?w=600' },
       { name: 'Fresh Cilantro', description: 'Vibrant green cilantro', price: 35, category: 'Herbs', location: 'Texas', farmerId: farmer1._id, imageUrl: 'https://images.unsplash.com/photo-1596647209707-1ae725cd8a80?w=600' },
+      { name: 'Organic Turmeric', description: 'Fresh golden turmeric root', price: 120, category: 'Herbs', location: 'Hawaii', farmerId: farmer2._id, imageUrl: 'https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=600' },
+      { name: 'Dried Oregano', description: 'Strong aromatic dried oregano', price: 90, category: 'Herbs', location: 'Greece', farmerId: farmer1._id, imageUrl: 'https://images.unsplash.com/photo-1596647209707-1ae725cd8a80?w=600' },
     ]);
 
     console.log('✅ Database Seeded Successfully with 38 Products');
