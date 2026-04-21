@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Organic Connect | Premium Harvest</title>
+    <title>Organic Connect | Premium E-Commerce</title>
     <link rel="stylesheet" href="css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 </head>
@@ -17,15 +17,15 @@
             <ul class="nav-links">
                 <li><a href="#" onclick="app.navigate('home')">Home</a></li>
                 <li><a href="#" onclick="app.navigate('products')">Market</a></li>
-                <li><a href="#" onclick="app.navigate('explore')">Expertise</a></li>
-                <li id="nav-dashboard" style="display:none;"><a href="#" onclick="app.navigate('dashboard')">Panel</a></li>
+                <li><a href="#" onclick="app.navigate('explore')">Explore</a></li>
+                <li id="nav-dashboard" style="display:none;"><a href="#" onclick="app.navigate('dashboard')">Profile</a></li>
             </ul>
             <div class="nav-actions">
-                <div id="cart-btn" onclick="app.navigate('cart')" style="cursor:pointer; font-size: 1.2rem; position:relative;">
-                    🛒 <span id="cart-count" style="position:absolute; top:-5px; right:-8px; background:var(--primary); font-size:0.6rem; padding:2px 5px; border-radius:50%;">0</span>
+                <div id="cart-btn" onclick="app.navigate('cart')" style="cursor:pointer; font-size: 1.25rem; position:relative;">
+                    🛒 <span id="cart-count" style="position:absolute; top:-5px; right:-10px; background:var(--primary); font-size:0.65rem; padding:1px 6px; border-radius:50%; font-weight:800;">0</span>
                 </div>
                 <div id="auth-buttons">
-                    <button class="btn-primary" style="padding: 0.5rem 1rem; font-size: 0.8rem;" onclick="app.navigate('login')">Sign In</button>
+                    <button class="btn-primary" style="padding: 0.5rem 1.2rem; font-size: 0.8rem;" onclick="app.navigate('login')">Sign In</button>
                 </div>
                 <div id="user-menu" style="display:none; align-items:center; gap: 1rem;">
                     <span id="user-name" style="color:var(--primary); font-weight:800;"></span>
@@ -41,27 +41,42 @@
             <div class="hero">
                 <div class="hero-overlay"></div>
                 <div class="hero-text">
-                    <h1>Sustainably Grown. <br>Delivered Daily.</h1>
-                    <p>Experience the purity of farm-to-table organic produce. No pesticides, no middleman, just nature.</p>
+                    <h1>Real Food. <br>Real Connection.</h1>
+                    <p>Connecting you directly with the best local organic farmers. Freshness you can taste, quality you can trust.</p>
                     <div class="hero-buttons">
-                        <button class="btn-primary" onclick="app.navigate('products')">Shop Market</button>
-                        <button class="btn-outline" onclick="app.navigate('explore')">Our Story</button>
+                        <button class="btn-primary" onclick="app.navigate('products')">Browse Catalog</button>
+                        <button class="btn-outline" onclick="app.navigate('explore')">Our Farming Story</button>
                     </div>
                 </div>
             </div>
             
-            <div class="stats-row" style="margin-top: -50px; position: relative; z-index: 5;">
-                <div class="stat-box glass-card">
-                    <h4>Freshly Picked</h4>
-                    <div class="value">100%</div>
+            <div class="stats-row" style="margin-top: -60px; position: relative; z-index: 5;">
+                <div class="stat-box glass-card"><h4>Market Fresh</h4><div class="value">Daily</div></div>
+                <div class="stat-box glass-card"><h4>Pesticide Free</h4><div class="value">100%</div></div>
+                <div class="stat-box glass-card"><h4>Local Support</h4><div class="value">Direct</div></div>
+            </div>
+        </section>
+
+        <!-- EXPLORE (LEARN ABOUT FARMING) -->
+        <section id="view-explore" class="view" style="padding: 100px 1.5rem 4rem; max-width: 1000px; margin: 0 auto;">
+            <div class="section-header">
+                <h2>Our Farming Wisdom</h2>
+                <p>Learn how we maintain the cycle of life through sustainable practices.</p>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:3rem; margin-top:2rem;">
+                <div class="glass-card" style="display:flex; flex-wrap:wrap; overflow:hidden;">
+                    <img src="https://images.unsplash.com/photo-1595841696650-5f12e84c987a?w=600" style="width:400px; height:300px; object-fit:cover;">
+                    <div style="padding:3rem; flex:1; min-width:300px;">
+                        <h3 style="font-size:2rem; margin-bottom:1rem;">Living Soil</h3>
+                        <p>Healthy soil is a breathing ecosystem. We avoid synthetic chemicals to ensure that the earth remains fertile for generations to come.</p>
+                    </div>
                 </div>
-                <div class="stat-box glass-card">
-                    <h4>Local Farms</h4>
-                    <div class="value">24h</div>
-                </div>
-                <div class="stat-box glass-card">
-                    <h4>Chemical Free</h4>
-                    <div class="value">0%</div>
+                <div class="glass-card" style="display:flex; flex-wrap:wrap-reverse; overflow:hidden;">
+                    <div style="padding:3rem; flex:1; min-width:300px;">
+                        <h3 style="font-size:2rem; margin-bottom:1rem;">Crop Rotation</h3>
+                        <p>By rotating crops seasonally, we naturally manage pests and replenish nutrients in the soil without the need for artificial fertilizers.</p>
+                    </div>
+                    <img src="https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=600" style="width:400px; height:300px; object-fit:cover;">
                 </div>
             </div>
         </section>
@@ -69,67 +84,78 @@
         <!-- MARKET -->
         <section id="view-products" class="view">
             <div class="section-header">
-                <h2>The Marketplace</h2>
-                <div style="max-width: 600px; margin: 1rem auto; display: flex; gap: 0.5rem; padding: 0 1rem;">
-                    <input type="text" id="searchBar" placeholder="Search..." onkeyup="app.filterProducts()" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:white; padding:0.8rem; border-radius:10px; flex:1;">
-                    <select id="categoryFilter" onchange="app.filterProducts()" style="background:var(--card-bg); color:white; border:none; padding:0.8rem; border-radius:10px;">
-                        <option value="">All</option>
+                <h2>Eco Marketplace</h2>
+                <div style="max-width: 800px; margin: 1.5rem auto; display: flex; gap: 0.5rem; padding: 0 1rem;">
+                    <input type="text" id="searchBar" placeholder="Search fresh produce..." onkeyup="app.filterProducts()" style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1); color:white; padding:0.8rem 1.2rem; border-radius:12px; flex:2;">
+                    <select id="categoryFilter" onchange="app.filterProducts()" style="background:var(--card-bg); color:white; border:1px solid rgba(255,255,255,0.1); padding:0.8rem; border-radius:12px; flex:1;">
+                        <option value="">All Categories</option>
                         <option value="Fruits">Fruits</option>
                         <option value="Vegetables">Vegetables</option>
                         <option value="Dairy">Dairy</option>
+                        <option value="Grains">Grains</option>
+                        <option value="Herbs">Herbs</option>
                     </select>
                 </div>
             </div>
             <div class="product-grid" id="product-container"></div>
         </section>
 
-        <!-- DASHBOARD -->
-        <section id="view-dashboard" class="view" style="padding-top:80px;">
-            <div class="stats-row" id="stats-grid">
-                <div class="stat-box glass-card"><h4>Orders</h4><div class="value" id="stat-value-1">0</div></div>
-                <div class="stat-box glass-card"><h4>Spending</h4><div class="value" id="stat-value-2">₹0</div></div>
-                <div class="stat-box glass-card"><h4>Status</h4><div class="value" style="color:var(--primary); font-size:1rem;">Verified</div></div>
-            </div>
-            <div id="farmer-dashboard" class="product-grid" style="display:none; grid-template-columns: 1fr;">
-                <div class="glass-card" style="padding: 2rem;">
-                    <h3>Publish New Harvest</h3>
-                    <form onsubmit="app.handleAddProduct(event)" style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:1rem;">
-                        <input type="text" id="addName" placeholder="Name" required style="padding:0.8rem; background:rgba(0,0,0,0.3); border:1px solid #334155; color:white; border-radius:8px;">
-                        <input type="number" id="addPrice" placeholder="Price" required style="padding:0.8rem; background:rgba(0,0,0,0.3); border:1px solid #334155; color:white; border-radius:8px;">
-                        <button type="submit" class="btn-primary" style="grid-column: 1/-1;">Launch to Market</button>
-                    </form>
-                </div>
-            </div>
-            <div class="product-grid" style="grid-template-columns: 1fr;">
-                <div id="orders-list"></div>
-            </div>
-        </section>
-
         <!-- CART -->
         <section id="view-cart" class="view" style="padding: 100px 1.5rem 2rem;">
-            <div class="glass-card" style="max-width: 800px; margin: 0 auto; padding: 2rem;">
-                <h2 style="margin-bottom: 2rem;">My Harvest Basket</h2>
-                <div id="cart-list"></div>
-                <div style="display:flex; justify-content: space-between; align-items: center; margin-top: 2rem; border-top: 1px solid #334155; padding-top: 1.5rem;">
-                    <div><h3>Total: ₹<span id="cart-total-price">0</span></h3></div>
-                    <button class="btn-primary" onclick="app.checkout()">Check Out</button>
+            <div class="glass-card" style="max-width: 700px; margin: 0 auto; padding: 2.5rem;">
+                <h2 style="margin-bottom: 2rem;">My Shopping List</h2>
+                <div id="cart-list" style="display:flex; flex-direction:column; gap:1rem;"></div>
+                <div style="display:flex; justify-content: space-between; align-items: center; margin-top: 2rem; border-top: 1px solid #334155; padding-top: 2rem;">
+                    <div><h3 style="font-size:1.8rem;">Total: ₹<span id="cart-total-price">0</span></h3></div>
+                    <button class="btn-primary" style="padding: 1rem 3rem;" onclick="app.checkout()">Place Order</button>
                 </div>
             </div>
         </section>
 
         <!-- PRODUCT DETAILS -->
         <section id="view-product-details" class="view" style="padding: 100px 1.5rem 2rem;">
-            <div id="details-content" class="glass-card" style="max-width: 1000px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: 2rem;"></div>
+            <div id="details-content" class="glass-card" style="max-width: 1000px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: 0;"></div>
         </section>
 
-        <!-- AUTH -->
+        <!-- DASHBOARD -->
+        <section id="view-dashboard" class="view" style="padding-top:100px;">
+            <div class="stats-row" id="stats-grid">
+                <div class="stat-box glass-card"><h4>History</h4><div class="value" id="stat-value-1">0</div></div>
+                <div class="stat-box glass-card"><h4>Invested</h4><div class="value" id="stat-value-2">₹0</div></div>
+                <div class="stat-box glass-card"><h4>Vouchers</h4><div class="value" style="color:var(--primary);">₹500</div></div>
+            </div>
+            <div class="product-grid" style="grid-template-columns: 1fr; max-width: 800px;">
+                <div id="orders-list"></div>
+            </div>
+        </section>
+
+        <!-- AUTH LOGIN -->
         <section id="view-login" class="view" style="display:grid; place-items:center;">
             <div class="glass-card" style="width: 100%; max-width: 400px; padding: 3rem;">
                 <h2 style="text-align:center; margin-bottom: 2rem;">Welcome Back</h2>
                 <form onsubmit="app.handleLogin(event)" style="display:flex; flex-direction:column; gap:1.2rem;">
-                    <input type="email" id="loginEmail" placeholder="Email" required style="padding:1rem; background:rgba(0,0,0,0.3); border:1px solid #334155; color:white; border-radius:10px;">
-                    <input type="password" id="loginPassword" placeholder="Password" required style="padding:1rem; background:rgba(0,0,0,0.3); border:1px solid #334155; color:white; border-radius:10px;">
+                    <input type="email" id="loginEmail" placeholder="Email" required style="padding:1rem; background:rgba(0,0,0,0.4); border:1px solid #334155; color:white; border-radius:10px;">
+                    <input type="password" id="loginPassword" placeholder="Password" required style="padding:1rem; background:rgba(0,0,0,0.4); border:1px solid #334155; color:white; border-radius:10px;">
                     <button type="submit" class="btn-primary">Sign In</button>
+                    <p style="text-align:center; font-size:0.85rem; color:var(--text-dim);">New member? <a href="#" onclick="app.navigate('register')" style="color:var(--primary); text-decoration:none;">Join us</a></p>
+                </form>
+            </div>
+        </section>
+
+        <!-- AUTH REGISTER -->
+        <section id="view-register" class="view" style="display:grid; place-items:center;">
+            <div class="glass-card" style="width: 100%; max-width: 400px; padding: 3rem;">
+                <h2 style="text-align:center; margin-bottom: 2rem;">Join the Community</h2>
+                <form onsubmit="app.handleRegister(event)" style="display:flex; flex-direction:column; gap:1.2rem;">
+                    <input type="text" id="regName" placeholder="Full Name" required style="padding:1rem; background:rgba(0,0,0,0.4); border:1px solid #334155; color:white; border-radius:10px;">
+                    <input type="email" id="regEmail" placeholder="Email" required style="padding:1rem; background:rgba(0,0,0,0.4); border:1px solid #334155; color:white; border-radius:10px;">
+                    <input type="password" id="regPassword" placeholder="Password" required style="padding:1rem; background:rgba(0,0,0,0.4); border:1px solid #334155; color:white; border-radius:10px;">
+                    <select id="regRole" style="padding:1rem; background:rgba(0,0,0,0.4); border:1px solid #334155; color:white; border-radius:10px;">
+                        <option value="user">Customer</option>
+                        <option value="farmer">Farmer / Specialist</option>
+                    </select>
+                    <button type="submit" class="btn-primary">Create Account</button>
+                    <p style="text-align:center; font-size:0.85rem; color:var(--text-dim);">Already part of us? <a href="#" onclick="app.navigate('login')" style="color:var(--primary); text-decoration:none;">Sign In</a></p>
                 </form>
             </div>
         </section>
@@ -137,14 +163,14 @@
 
     <div id="ai-chat-fab" onclick="app.toggleChat()">🍃</div>
     <div id="ai-chat-window">
-        <div style="background:var(--primary); padding:1rem; display:flex; justify-content:space-between;">
-            <strong>Expert AI</strong>
-            <button onclick="app.toggleChat()" style="background:none; border:none; color:white; cursor:pointer;">×</button>
+        <div style="background:var(--primary); padding:1rem; display:flex; justify-content:space-between; align-items:center;">
+            <strong style="font-size:0.9rem;">Expert Organic AI</strong>
+            <button onclick="app.toggleChat()" style="background:none; border:none; color:white; cursor:pointer; font-size:1.5rem;">×</button>
         </div>
-        <div id="chat-messages" style="flex:1; padding:1rem; overflow-y:auto; display:flex; flex-direction:column; gap:0.5rem; font-size:0.85rem;"></div>
-        <div style="padding:0.8rem; display:flex; gap:0.5rem; background:rgba(255,255,255,0.05);">
-            <input type="text" id="chatInput" placeholder="Ask anything..." style="flex:1; padding:0.5rem; border-radius:5px; border:none; background:#000; color:white;">
-            <button class="btn-primary" style="padding:0.5rem;" onclick="app.sendMessage()">Go</button>
+        <div id="chat-messages" style="flex:1; padding:1.2rem; overflow-y:auto; display:flex; flex-direction:column; gap:0.8rem; font-size:0.85rem; background:rgba(0,0,0,0.2);"></div>
+        <div style="padding:1rem; display:flex; gap:0.5rem; background:rgba(2,6,23,0.8); border-top:1px solid rgba(255,255,255,0.1);">
+            <input type="text" id="chatInput" placeholder="Ask about crop rotation..." style="flex:1; padding:0.6rem; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:#000; color:white;">
+            <button class="btn-primary" style="padding:0.6rem 1rem; font-size:0.8rem;" onclick="app.sendMessage()">Send</button>
         </div>
     </div>
 
