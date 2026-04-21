@@ -76,7 +76,7 @@ const app = {
             this.showLoading(false);
             this.revealElements();
             this.isNavigating = false;
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            window.scrollTo({ top: 0, behavior: 'auto' });
         }, 50);
     },
 

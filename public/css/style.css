@@ -59,7 +59,7 @@ body::before {
 
 
 .nav-container {
-    max-width: 1400px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 1.2rem 3rem;
+    max-width: 1400px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0.8rem 2.5rem;
 }
 .nav-actions { display: flex; align-items: center; gap: 2rem; flex-shrink: 0; }
 #auth-links { display: flex; align-items: center; gap: 1.5rem; }
@@ -121,7 +121,7 @@ main { padding-top: 0; } /* Removed global padding */
     display: none; 
     opacity: 0; 
     pointer-events: none; 
-    padding-top: 90px; /* Optimized top space */
+    padding-top: 75px; /* Reduced from 90px */
 }
 
 #view-home, #view-explore { padding-top: 0 !important; } /* Immersive views touch the top */
@@ -131,9 +131,10 @@ main { padding-top: 0; } /* Removed global padding */
 
 /* Immersive Hero Section */
 .hero {
-    min-height: 85vh; display: flex; align-items: center; justify-content: center; text-align: center;
+    min-height: 70vh; /* Reduced from 85vh to minimize extra space */
+    display: flex; align-items: center; justify-content: center; text-align: center;
     position: relative; overflow: hidden; margin: 0; border-radius: 0 0 40px 40px;
-    padding-top: 60px; /* Optimized for standard viewports */
+    padding-top: 40px;
 
     /* Use the generated cinematic backdrop */
     background: url('../hero-bg.png') center/cover no-repeat;
@@ -146,7 +147,7 @@ main { padding-top: 0; } /* Removed global padding */
     z-index: 1;
 }
 .hero-text { 
-    position: relative; z-index: 2; max-width: 1000px; padding: 6rem 4rem 4rem; /* Added top padding */
+    position: relative; z-index: 2; max-width: 1000px; padding: 3rem 2rem 2rem; /* Reduced from 6rem */
     transform: perspective(1000px) rotateX(var(--my)) rotateY(var(--mx));
     transition: transform 0.1s ease-out;
 }
@@ -194,7 +195,7 @@ main { padding-top: 0; } /* Removed global padding */
 /* Marketplace Visuals */
 .product-grid { 
     display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); 
-    gap: 3rem; padding: 4rem 2rem;
+    gap: 2rem; padding: 2rem 1.5rem; /* Reduced from 4rem 2rem */
 }
 .product-card { overflow: hidden; border-radius: 30px; }
 .product-img-wrapper { position: relative; height: 280px; overflow: hidden; }
@@ -206,7 +207,7 @@ main { padding-top: 0; } /* Removed global padding */
 
 /* Dashboard Stat Cards */
 .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 3rem; }
-.stat-card { padding: 3rem; border-left: 6px solid var(--primary); }
+.stat-card { padding: 2rem; border-left: 6px solid var(--primary); } /* Reduced from 3rem */
 .stat-value { font-size: 4rem; font-weight: 950; color: #fff; }
 
 /* Chatbot FAB - Leaf Style */
@@ -279,7 +280,7 @@ main { padding-top: 0; } /* Removed global padding */
 /* Forms & Auth */
 .auth-container { max-width: 480px; margin: 1.5rem auto; padding: 1.5rem; }
 
-.form-card { padding: 4rem; border-radius: 35px; background: var(--glass-bg); border: 1px solid var(--glass-border); }
+.form-card { padding: 2.5rem; border-radius: 35px; background: var(--glass-bg); border: 1px solid var(--glass-border); } /* Reduced from 4rem */
 .form-card h2 { font-size: 3rem; margin-bottom: 2rem; text-align: center; font-weight: 900; }
 
 input, select {
