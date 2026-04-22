@@ -113,22 +113,43 @@ const app = {
 
     renderProducts(products) {
         const container = document.getElementById('product-container');
-        if(!products.length) { container.innerHTML = '<div style="grid-column: 1/-1; text-align:center; padding: 4rem;"><h3>No organic treasures found.</h3></div>'; return; }
-        container.innerHTML = products.map(p => `
-            <div class="glass-card reveal">
-                <div class="img-box" onclick="app.viewProduct('${p._id}')">
-                    <img src="${p.imageUrl}" alt="${p.name}" onerror="this.src='https://images.unsplash.com/photo-1542838132-92c53300491e?w=600'">
+        if(!products.length) { 
+            container.innerHTML = '<div style="grid-column: 1/-1; text-align:center; padding: 4rem;"><h3>No organic treasures found.</h3></div>'; 
+            return; 
+        }
+
+        const grouped = products.reduce((acc, p) => {
+            if(!acc[p.category]) acc[p.category] = [];
+            acc[p.category].push(p);
+            return acc;
+        }, {});
+
+        let html = '';
+        Object.keys(grouped).forEach(cat => {
+            html += `
+                <div style="grid-column: 1/-1; margin-top: 3rem; margin-bottom: 1.5rem; border-bottom: 2px solid var(--primary); padding-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center;">
+                    <h2 style="font-size: 2rem; color: var(--primary);">${cat}</h2>
+                    <span style="font-size: 0.9rem; color: var(--text-dim);">${grouped[cat].length} Items</span>
                 </div>
-                <div class="card-content">
-                    <small style="color:var(--primary); font-weight:700; text-transform:uppercase; font-size:0.65rem;">${p.category}</small>
-                    <h3 style="margin: 0.2rem 0 0.5rem; font-size: 1.1rem; height: 1.4em; overflow: hidden;">${p.name}</h3>
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:1.2rem;">
-                        <span class="price" style="font-size: 1.25rem;">₹${p.price}</span>
-                        <button class="btn-primary" style="padding:0.4rem 1rem; font-size:0.8rem;" onclick="app.addToCart('${p._id}', '${p.name}', ${p.price})">Buy</button>
+            `;
+            html += grouped[cat].map(p => `
+                <div class="glass-card reveal">
+                    <div class="img-box" onclick="app.viewProduct('${p._id}')">
+                        <img src="${p.imageUrl}" alt="${p.name}" onerror="this.src='https://images.unsplash.com/photo-1542838132-92c53300491e?w=600'">
+                    </div>
+                    <div class="card-content">
+                        <small style="color:var(--primary); font-weight:700; text-transform:uppercase; font-size:0.65rem;">${p.category}</small>
+                        <h3 style="margin: 0.2rem 0 0.5rem; font-size: 1.1rem; height: 1.4em; overflow: hidden;">${p.name}</h3>
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:1.2rem;">
+                            <span class="price" style="font-size: 1.25rem;">₹${p.price}</span>
+                            <button class="btn-primary" style="padding:0.4rem 1rem; font-size:0.8rem;" onclick="app.addToCart('${p._id}', '${p.name}', ${p.price})">Buy</button>
+                        </div>
                     </div>
                 </div>
-            </div>
-        `).join('');
+            `).join('');
+        });
+
+        container.innerHTML = html;
         this.revealElements();
     },
 
