@@ -126,12 +126,74 @@ const app = {
     },
 
     navigate(view) {
-        // Simple SPA navigation logic
-        console.log('Navigating to:', view);
-        // For this demo, we'll stay on the market view mostly
-        if (view === 'market' || view === 'home') {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+        this.currentView = view;
+        const views = ['home', 'market', 'login', 'explore'];
+        
+        views.forEach(v => {
+            const el = document.getElementById(`${v}-view`);
+            if (el) el.style.display = (v === view) ? 'block' : 'none';
+            
+            const link = document.getElementById(`link-${v}`);
+            if (link) {
+                if (v === view) link.classList.add('active');
+                else link.classList.remove('active');
+            }
+        });
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        
+        if (view === 'market') {
+            this.fetchProducts();
         }
+
+        // Re-trigger reveal animations for new view
+        setTimeout(() => this.revealOnScroll(), 100);
+    },
+
+    toggleChat() {
+        const chat = document.getElementById('chatbot-window');
+        if (chat) {
+            chat.style.display = (chat.style.display === 'none') ? 'flex' : 'none';
+        }
+    },
+
+    async sendChat() {
+        const input = document.getElementById('chatInput');
+        const msg = input.value.trim();
+        if (!msg) return;
+
+        this.appendMessage('user', msg);
+        input.value = '';
+
+        try {
+            const res = await fetch(`${API_URL}/ai/chat`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: msg })
+            });
+            const data = await res.json();
+            this.appendMessage('bot', data.reply || "I'm processing your request!");
+        } catch (err) {
+            this.appendMessage('bot', "I'm having trouble connecting right now, but I'm here to help!");
+        }
+    },
+
+    appendMessage(sender, text) {
+        const container = document.getElementById('chatMessages') || document.getElementById('chat-messages');
+        const div = document.createElement('div');
+        div.className = `msg ${sender}`;
+        div.innerText = text;
+        container.appendChild(div);
+        container.scrollTop = container.scrollHeight;
+    },
+
+    async handleLogin(e) {
+        e.preventDefault();
+        this.showToast("Signing you in...");
+        setTimeout(() => {
+            this.showToast("Login successful! Welcome back.");
+            this.navigate('home');
+        }, 1500);
     }
 };
 

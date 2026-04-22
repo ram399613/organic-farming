@@ -29,26 +29,102 @@
     </nav>
 
     <main>
-        <!-- SEARCH SECTION -->
-        <section class="search-section">
-            <h1 style="margin-bottom: 2rem; font-size: 2.5rem;">Freshness Delivered.</h1>
-            <div class="search-box">
-                <input type="text" id="searchBar" class="search-input" placeholder="Search fresh produce..." onkeyup="app.fetchProducts()">
-                <select id="categoryFilter" class="category-filter" onchange="app.fetchProducts()">
-                    <option value="All">All Categories</option>
-                    <option value="Fruits">Fruits</option>
-                    <option value="Vegetables">Vegetables</option>
-                    <option value="Dairy">Dairy</option>
-                    <option value="Grains">Grains</option>
-                </select>
+        <!-- HOME SECTION -->
+        <section id="home-view" class="view-section">
+            <div class="hero">
+                <div class="hero-content">
+                    <h1 class="hero-title reveal">Premium Organic <br><span class="text-gradient">From Farm to Home</span></h1>
+                    <p class="hero-subtitle reveal">Directly connecting farmers and consumers for a healthier tomorrow. Pure, fresh, and sustainable.</p>
+                    <div class="hero-btns reveal">
+                        <button class="btn-primary" onclick="app.navigate('market')">Shop Now</button>
+                        <button class="btn-outline" onclick="app.navigate('explore')">Explore Farmers</button>
+                    </div>
+                </div>
+                <div class="hero-image reveal">
+                    <img src="https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?auto=format&fit=crop&q=80&w=1000" alt="Farmer">
+                </div>
             </div>
         </section>
 
         <!-- MARKET SECTION -->
-        <div id="market-content">
-            <div id="category-groups"></div>
-        </div>
+        <section id="market-view" class="view-section" style="display: none;">
+            <!-- SEARCH SECTION -->
+            <div class="search-section">
+                <h1 style="margin-bottom: 2rem; font-size: 2.5rem;">Freshness Delivered.</h1>
+                <div class="search-box">
+                    <input type="text" id="searchBar" class="search-input" placeholder="Search fresh produce..." onkeyup="app.fetchProducts()">
+                    <select id="categoryFilter" class="category-filter" onchange="app.fetchProducts()">
+                        <option value="All">All Categories</option>
+                        <option value="Fruits">Fruits</option>
+                        <option value="Vegetables">Vegetables</option>
+                        <option value="Dairy">Dairy</option>
+                        <option value="Grains">Grains</option>
+                    </select>
+                </div>
+            </div>
+            <div id="market-content">
+                <div id="category-groups"></div>
+            </div>
+        </section>
+
+        <!-- LOGIN SECTION -->
+        <section id="login-view" class="view-section" style="display: none;">
+            <div class="auth-container">
+                <div class="auth-card reveal">
+                    <h2>Welcome Back</h2>
+                    <p>Access your organic marketplace</p>
+                    <form id="loginForm" onsubmit="app.handleLogin(event)">
+                        <div class="input-group">
+                            <label>Email</label>
+                            <input type="email" required placeholder="farmer@example.com">
+                        </div>
+                        <div class="input-group">
+                            <label>Password</label>
+                            <input type="password" required placeholder="••••••••">
+                        </div>
+                        <button type="submit" class="btn-primary" style="width: 100%; margin-top: 1rem;">Sign In</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- EXPLORE SECTION -->
+        <section id="explore-view" class="view-section" style="display: none;">
+            <div class="container" style="padding: 120px 2rem;">
+                <h2 class="category-title">Explore Sustainable Farming</h2>
+                <p style="color: var(--text-dim); margin-bottom: 2rem;">Discover the stories behind your food.</p>
+                <div class="product-grid">
+                    <!-- Placeholder for stories -->
+                    <div class="product-card reveal">
+                        <img src="https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?auto=format&fit=crop&q=80&w=500" class="product-img" alt="Greenhouse">
+                        <div class="product-info">
+                            <h3>Modern Hydroponics</h3>
+                            <p style="color: var(--text-dim);">Saving 90% more water compared to traditional farming.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
     </main>
+
+    <!-- CHATBOT -->
+    <div id="chatbot-trigger" onclick="app.toggleChat()">
+        <span class="chat-icon">💬</span>
+    </div>
+
+    <div id="chatbot-window" style="display: none;">
+        <div class="chat-header">
+            <h3>AgriBot Assistant</h3>
+            <button onclick="app.toggleChat()">×</button>
+        </div>
+        <div id="chat-messages">
+            <div class="msg bot">Hello! How can I help you today with your organic shopping?</div>
+        </div>
+        <div class="chat-input-wrap">
+            <input type="text" id="chatInput" placeholder="Ask about products..." onkeypress="if(event.key==='Enter') app.sendChat()">
+            <button onclick="app.sendChat()">Send</button>
+        </div>
+    </div>
 
     <script src="js/app.js"></script>
 </body>
