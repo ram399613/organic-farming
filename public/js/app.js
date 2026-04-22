@@ -22,8 +22,10 @@ const app = {
     },
 
     async fetchProducts() {
-        const search = document.getElementById('searchBar').value;
-        const category = document.getElementById('categoryFilter').value;
+        const searchBar = document.getElementById('searchBar');
+        const categoryFilter = document.getElementById('categoryFilter');
+        const search = searchBar ? searchBar.value : '';
+        const category = categoryFilter ? categoryFilter.value : 'All';
         
         try {
             const res = await fetch(`${API_URL}/products?search=${search}&category=${category}`);
@@ -36,6 +38,7 @@ const app = {
 
     renderProducts(products) {
         const container = document.getElementById('category-groups');
+        if (!container) return;
         container.innerHTML = '';
 
         if (products.length === 0) {
@@ -80,23 +83,81 @@ const app = {
             container.insertAdjacentHTML('beforeend', groupHtml);
         });
 
-        // Trigger reveal after a tiny delay for DOM to settle
         setTimeout(() => this.revealOnScroll(), 100);
     },
 
     addToCart(id, name, price) {
-        this.cart.push({ id, name, price });
+        const existing = this.cart.find(item => item.id === id);
+        if (existing) {
+            existing.qty = (existing.qty || 1) + 1;
+        } else {
+            this.cart.push({ id, name, price, qty: 1 });
+        }
         this.updateCartCount();
-        this.showToast(`Added ${name} to cart!`);
+        this.showToast(`Added ${name} to basket!`);
+        this.renderCart();
+    },
+
+    removeFromCart(index) {
+        this.cart.splice(index, 1);
+        this.updateCartCount();
+        this.renderCart();
     },
 
     updateCartCount() {
         const count = document.getElementById('cart-count');
-        if (count) count.innerText = this.cart.length;
+        if (count) {
+            const totalQty = this.cart.reduce((acc, item) => acc + (item.qty || 1), 0);
+            count.innerText = totalQty;
+        }
+    },
+
+    renderCart() {
+        const container = document.getElementById('cart-items');
+        const totalEl = document.getElementById('total-amount');
+        if (!container || !totalEl) return;
+        container.innerHTML = '';
+        
+        let total = 0;
+        this.cart.forEach((item, index) => {
+            total += item.price * (item.qty || 1);
+            container.innerHTML += `
+                <div class="cart-item">
+                    <div class="item-info">
+                        <h4>${item.name}</h4>
+                        <p>₹${item.price} x ${item.qty || 1}</p>
+                    </div>
+                    <button class="remove-btn" onclick="app.removeFromCart(${index})">🗑️</button>
+                </div>
+            `;
+        });
+        
+        totalEl.innerText = total;
+        if (this.cart.length === 0) {
+            container.innerHTML = '<div style="text-align:center; padding:2rem; color:var(--text-dim);">Your basket is empty.</div>';
+        }
+    },
+
+    toggleCart() {
+        const sidebar = document.getElementById('cart-sidebar');
+        if (sidebar) {
+            const isHidden = sidebar.style.display === 'none';
+            sidebar.style.display = isHidden ? 'flex' : 'none';
+            if (isHidden) this.renderCart();
+        }
+    },
+
+    checkout() {
+        if (this.cart.length === 0) return this.showToast("Your basket is empty!");
+        this.showToast("Thank you for supporting organic farmers!");
+        this.cart = [];
+        this.updateCartCount();
+        this.toggleCart();
     },
 
     showToast(msg) {
         const container = document.getElementById('toast-container');
+        if (!container) return;
         const toast = document.createElement('div');
         toast.className = 'toast';
         toast.style.cssText = `
@@ -129,7 +190,16 @@ const app = {
         this.currentView = view;
         const banner = document.getElementById('home-banner');
         const title = document.getElementById('view-title');
+        const eduSection = document.getElementById('edu-section');
+        const eduContent = document.getElementById('edu-content');
+        const searchSection = document.querySelector('.search-section');
         const links = ['home', 'market', 'explore'];
+
+        // Reset search bar and filters for new view
+        const sb = document.getElementById('searchBar');
+        const cf = document.getElementById('categoryFilter');
+        if (sb) sb.value = '';
+        if (cf) cf.value = 'All';
 
         // Update links
         links.forEach(l => {
@@ -138,18 +208,41 @@ const app = {
         });
 
         if (view === 'home') {
-            banner.style.display = 'block';
-            title.innerText = 'Featured Freshness';
-            this.fetchProducts(); // Show all for home
+            if (banner) banner.style.display = 'block';
+            if (eduSection) eduSection.style.display = 'block';
+            if (title) title.innerText = 'Featured Freshness';
+            if (eduContent) {
+                eduContent.innerHTML = `
+                    <h2>Organic Farming: The Future</h2>
+                    <p>Organic farming involves the cultivation of plants in natural ways, avoiding synthetic substances to maintain soil fertility and ecological balance.</p>
+                    <ul style="margin-top: 1rem; text-align: left; padding-left: 1.5rem; color: var(--text-dim);">
+                        <li>No Synthetic Pesticides</li>
+                        <li>Soil Health & Biodiversity</li>
+                        <li>Eco-friendly & Sustainable</li>
+                    </ul>
+                `;
+            }
+            this.fetchProducts(); 
         } else if (view === 'market') {
-            banner.style.display = 'none';
-            title.innerText = 'Full Marketplace';
+            if (banner) banner.style.display = 'none';
+            if (eduSection) eduSection.style.display = 'none';
+            if (title) title.innerText = 'Full Marketplace';
             this.fetchProducts();
         } else if (view === 'explore') {
-            banner.style.display = 'none';
-            title.innerText = 'Explore Organic Stories';
-            // For demo, maybe filter to grains/dairy for "Explore"
-            document.getElementById('categoryFilter').value = 'Grains';
+            if (banner) banner.style.display = 'none';
+            if (eduSection) eduSection.style.display = 'block';
+            if (title) title.innerText = 'Explore Sustainable Grains';
+            if (eduContent) {
+                eduContent.innerHTML = `
+                    <h2>Sustainable Grains</h2>
+                    <p>Our farmers use traditional crop rotation to ensure nutrient density. By choosing organic, you're supporting soil regeneration.</p>
+                    <div style="margin-top: 1rem; display: flex; gap: 1rem; justify-content: center;">
+                        <div class="stat"><b>100%</b><br>Natural</div>
+                        <div class="stat"><b>0%</b><br>Chemicals</div>
+                    </div>
+                `;
+            }
+            if (cf) cf.value = 'Grains';
             this.fetchProducts();
         } else if (view === 'login') {
             this.openLogin();
@@ -199,6 +292,7 @@ const app = {
 
     appendMessage(sender, text) {
         const container = document.getElementById('chat-messages');
+        if (!container) return;
         const div = document.createElement('div');
         div.className = `msg ${sender}`;
         div.innerText = text;
@@ -208,12 +302,9 @@ const app = {
 
     async handleLogin(e) {
         e.preventDefault();
-        this.showToast("Signing you in...");
-        setTimeout(() => {
-            this.showToast("Welcome back!");
-            this.closeLogin();
-            this.navigate('home');
-        }, 1200);
+        this.showToast("Welcome back!");
+        this.closeLogin();
+        this.navigate('home');
     }
 };
 

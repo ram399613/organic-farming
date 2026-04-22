@@ -30,34 +30,60 @@
 
     <main>
         <!-- UNIFIED VIEW SECTION -->
-        <div id="main-view" class="container">
-            <!-- BANNER (Only for Home) -->
-            <div id="home-banner" class="home-banner reveal">
-                <div class="banner-content">
-                    <h1>Welcome to <span class="text-gradient">Organic Connect</span></h1>
-                    <p>Connecting you directly with local organic farmers.</p>
-                    <button class="btn-primary" onclick="app.navigate('market')">Start Shopping</button>
+        <div id="main-view">
+            <!-- EDUCATIONAL BACKGROUND SECTION (For Home/Explore) -->
+            <div id="edu-section" class="edu-background" style="display: none;">
+                <div class="edu-overlay">
+                    <div id="edu-content" class="edu-card reveal">
+                        <!-- Content dynamic via JS -->
+                    </div>
                 </div>
             </div>
 
-            <!-- SEARCH SECTION (Shared) -->
-            <section class="search-section">
-                <h1 id="view-title" style="margin-bottom: 2rem; font-size: 2.5rem;">Marketplace</h1>
-                <div class="search-box">
-                    <input type="text" id="searchBar" class="search-input" placeholder="Search fresh produce..." onkeyup="app.fetchProducts()">
-                    <select id="categoryFilter" class="category-filter" onchange="app.fetchProducts()">
-                        <option value="All">All Categories</option>
-                        <option value="Fruits">Fruits</option>
-                        <option value="Vegetables">Vegetables</option>
-                        <option value="Dairy">Dairy</option>
-                        <option value="Grains">Grains</option>
-                    </select>
+            <div class="container">
+                <!-- BANNER (Only for Home) -->
+                <div id="home-banner" class="home-banner reveal">
+                    <div class="banner-content">
+                        <h1>Welcome to <span class="text-gradient">Organic Connect</span></h1>
+                        <p>Connecting you directly with local organic farmers for a sustainable future.</p>
+                        <button class="btn-primary" onclick="app.navigate('market')">Start Shopping</button>
+                    </div>
                 </div>
-            </section>
 
-            <!-- CONTENT SECTION (Shared) -->
-            <div id="market-content">
-                <div id="category-groups"></div>
+                <!-- SEARCH SECTION (Shared) -->
+                <section class="search-section">
+                    <h1 id="view-title" style="margin-bottom: 2rem; font-size: 2.5rem;">Marketplace</h1>
+                    <div class="search-box">
+                        <input type="text" id="searchBar" class="search-input" placeholder="Search fresh produce..." onkeyup="app.fetchProducts()">
+                        <select id="categoryFilter" class="category-filter" onchange="app.fetchProducts()">
+                            <option value="All">All Categories</option>
+                            <option value="Fruits">Fruits</option>
+                            <option value="Vegetables">Vegetables</option>
+                            <option value="Dairy">Dairy</option>
+                            <option value="Grains">Grains</option>
+                        </select>
+                    </div>
+                </section>
+
+                <!-- CONTENT SECTION (Shared) -->
+                <div id="market-content">
+                    <div id="category-groups"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CART SIDEBAR -->
+        <div id="cart-sidebar" class="sidebar" style="display: none;">
+            <div class="sidebar-header">
+                <h2>Your Basket</h2>
+                <button class="close-btn" onclick="app.toggleCart()">×</button>
+            </div>
+            <div id="cart-items" class="cart-items">
+                <!-- Dynamic cart items -->
+            </div>
+            <div class="cart-footer">
+                <div class="cart-total">Total: ₹<span id="total-amount">0</span></div>
+                <button class="btn-primary checkout-btn" onclick="app.checkout()">Checkout Now</button>
             </div>
         </div>
 
