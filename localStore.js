@@ -15,14 +15,7 @@ const POOLS = {
         { name: 'Black Plum', img: 'https://images.unsplash.com/photo-1610832958506-aa56368176cf?w=800' },
         { name: 'Golden Kiwi', img: 'https://images.unsplash.com/photo-1585059895524-72359e061381?w=800' },
         { name: 'Navel Orange', img: 'https://images.unsplash.com/photo-1549888834-3ec93abae044?w=800' },
-        { name: 'Eureka Lemon', img: 'https://images.unsplash.com/photo-1594502184342-2e12f877aa73?w=800' },
-        { name: 'Anjou Pear', img: 'https://images.unsplash.com/photo-1541859482180-df4c67dec90a?w=800' },
-        { name: 'Bing Cherry', img: 'https://images.unsplash.com/photo-1528821128474-27f963b062bf?w=800' },
-        { name: 'Pomegranate', img: 'https://images.unsplash.com/photo-1621345472851-ae327663f78b?w=800' },
-        { name: 'Green Watermelon', img: 'https://images.unsplash.com/photo-1563270284-38a3003a2e0c?w=800' },
-        { name: 'Dragon Fruit', img: 'https://images.unsplash.com/photo-1527325511917-0ec997672191?w=800' },
-        { name: 'Cantaloupe', img: 'https://images.unsplash.com/photo-1601344445214-cb911a3d3cbe?w=800' },
-        { name: 'Passion Fruit', img: 'https://images.unsplash.com/photo-1534119394531-ed46d8de8ad4?w=800' }
+        { name: 'Eureka Lemon', img: 'https://images.unsplash.com/photo-1582979512210-99b6a53386f9?w=800' }
     ],
     Vegetables: [
         { name: 'Nantes Carrot', img: 'https://images.unsplash.com/photo-1598170845058-32b9d6a5da37?w=800' },
@@ -37,14 +30,7 @@ const POOLS = {
         { name: 'Baby Spinach', img: 'https://images.unsplash.com/photo-1576045057995-568f588f82fb?w=800' },
         { name: 'Persian Cucumber', img: 'https://images.unsplash.com/photo-1449333256619-fa20af5ae51f?w=800' },
         { name: 'Black Zucchini', img: 'https://images.unsplash.com/photo-1534073828943-f801091bbffb?w=800' },
-        { name: 'Red Radish', img: 'https://images.unsplash.com/photo-1508215885820-4df893b4f2fa?w=800' },
-        { name: 'Hardneck Garlic', img: 'https://images.unsplash.com/photo-1540148426945-6cf22a6b2383?w=800' },
-        { name: 'Detroit Beetroot', img: 'https://images.unsplash.com/photo-1444464666168-49d633b86747?w=800' },
-        { name: 'Cauliflower', img: 'https://images.unsplash.com/photo-1566385101042-1a0aa0c12e8c?w=800' },
-        { name: 'Eggplant', img: 'https://images.unsplash.com/photo-1590301157890-4810ed352733?w=800' },
-        { name: 'Asparagus', img: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800' },
-        { name: 'Brussels Sprouts', img: 'https://images.unsplash.com/photo-1587486913049-53fc88980cfc?w=800' },
-        { name: 'Cabbage', img: 'https://images.unsplash.com/photo-1601648764658-cf37e8c89b70?w=800' }
+        { name: 'Red Radish', img: 'https://images.unsplash.com/photo-1508215885820-4df893b4f2fa?w=800' }
     ],
     Dairy: [
         { name: 'Whole Raw Milk', img: 'https://images.unsplash.com/photo-1563636619-e9143da7973b?w=800' },
@@ -53,20 +39,13 @@ const POOLS = {
         { name: 'Wildflower Honey', img: 'https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=800' },
         { name: 'Greek Yogurt', img: 'https://images.unsplash.com/photo-1488477181946-6428a0291777?w=800' },
         { name: 'Cultured Butter', img: 'https://images.unsplash.com/photo-1528740096961-3798add19cb7?w=800' },
-        { name: 'Heavy Cream', img: 'https://images.unsplash.com/photo-1505394033323-424dcb12211f?w=800' },
-        { name: 'Pure Ghee', img: 'https://images.unsplash.com/photo-1550583724-b26cc28ae5cd?w=800' },
-        { name: 'Fresh Paneer', img: 'https://images.unsplash.com/photo-1528515014902-613d5482f347?w=800' },
+        { name: 'Heavy Cream', img: 'https://images.unsplash.com/photo-1553909489-cd47e0907980?w=800' },
+        { name: 'Pure Ghee', img: 'https://images.unsplash.com/photo-1631709497146-a239ef373cf1?w=800' },
+        { name: 'Fresh Paneer', img: 'https://images.unsplash.com/photo-1564149504294-81c62f927ed9?w=800' },
         { name: 'Goat Milk', img: 'https://images.unsplash.com/photo-1517331156700-3c241d2b4d83?w=800' },
         { name: 'Mozzarella', img: 'https://images.unsplash.com/photo-1559561853-08451507cbe7?w=800' },
         { name: 'Feta Cheese', img: 'https://images.unsplash.com/photo-1553531384-cc64ac80f931?w=800' },
-        { name: 'Sour Cream', img: 'https://images.unsplash.com/photo-1552683326-40f44bb571bb?w=800' },
-        { name: 'Cottage Cheese', img: 'https://images.unsplash.com/photo-1580231575084-fa060372df3a?w=800' },
-        { name: 'Skimmed Milk', img: 'https://images.unsplash.com/photo-1628088062854-d1870b4553ad?w=800' },
-        { name: 'Brown Eggs', img: 'https://images.unsplash.com/photo-1506976785307-8732e854ad03?w=800' },
-        { name: 'Quail Eggs', img: 'https://images.unsplash.com/photo-1598965402089-897ce52e8355?w=800' },
-        { name: 'Ricotta Cheese', img: 'https://images.unsplash.com/photo-1511520668940-08198f15eca1?w=800' },
-        { name: 'Buttermilk', img: 'https://images.unsplash.com/photo-1510431199141-39690327f27a?w=800' },
-        { name: 'Whey Protein', img: 'https://images.unsplash.com/photo-1594142465967-e41f69abb92a?w=800' }
+        { name: 'Sour Cream', img: 'https://images.unsplash.com/photo-1552683326-40f44bb571bb?w=800' }
     ],
     Grains: [
         { name: 'Hard Red Wheat', img: 'https://images.unsplash.com/photo-1574323347407-15e3df50f38b?w=800' },
@@ -81,14 +60,7 @@ const POOLS = {
         { name: 'Brown Rice', img: 'https://images.unsplash.com/photo-1591814468924-caf88d1232e1?w=800' },
         { name: 'Rye Grains', img: 'https://images.unsplash.com/photo-1510255973121-66df9892c55e?w=800' },
         { name: 'Chia Seeds', img: 'https://images.unsplash.com/photo-1512485600390-3703a9127ac3?w=800' },
-        { name: 'Flax Seeds', img: 'https://images.unsplash.com/photo-1511200230240-410a624597d3?w=800' },
-        { name: 'Sorghum', img: 'https://images.unsplash.com/photo-1582041236130-1858448831a9?w=800' },
-        { name: 'Amaranth', img: 'https://images.unsplash.com/photo-1504973991023-90703f1981cc?w=800' },
-        { name: 'Black Rice', img: 'https://images.unsplash.com/photo-1536304953400-eeadc2035133?w=800' },
-        { name: 'Couscous', img: 'https://images.unsplash.com/photo-1543339308-43e59d6b73a6?w=800' },
-        { name: 'Millet Flour', img: 'https://images.unsplash.com/photo-1532186728478-d467794cc2ec?w=800' },
-        { name: 'Spelt', img: 'https://images.unsplash.com/photo-1583344048594-a760f34c20ee?w=800' },
-        { name: 'Bulgur Wheat', img: 'https://images.unsplash.com/photo-1520073201524-8b5d329aa57c?w=800' }
+        { name: 'Flax Seeds', img: 'https://images.unsplash.com/photo-1511200230240-410a624597d3?w=800' }
     ],
     Herbs: [
         { name: 'Sweet Basil', img: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?w=800' },
@@ -103,14 +75,7 @@ const POOLS = {
         { name: 'Chives', img: 'https://images.unsplash.com/photo-1557090491-0322c36678b8?w=800' },
         { name: 'Sage Leaves', img: 'https://images.unsplash.com/photo-1594968973184-9140fa307769?w=800' },
         { name: 'Dill', img: 'https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?w=800' },
-        { name: 'Lemongrass', img: 'https://images.unsplash.com/photo-1520286851410-612663964177?w=800' },
-        { name: 'Bay Leaves', img: 'https://images.unsplash.com/photo-1628151015968-3a4429e9ef04?w=800' },
-        { name: 'Lavender', img: 'https://images.unsplash.com/photo-1527335932348-42196ea8a291?w=800' },
-        { name: 'Tarragon', img: 'https://images.unsplash.com/photo-1512428813834-c702c7702b78?w=800' },
-        { name: 'Marjoram', img: 'https://images.unsplash.com/photo-1515543904379-3d757afe72e4?w=800' },
-        { name: 'Stevia', img: 'https://images.unsplash.com/photo-1608726584288-005089332e98?w=800' },
-        { name: 'Lemon Balm', img: 'https://images.unsplash.com/photo-1521133573832-3437c90aa410?w=800' },
-        { name: 'Curry Leaves', img: 'https://images.unsplash.com/photo-1610450539162-421b4a496885?w=800' }
+        { name: 'Lemongrass', img: 'https://images.unsplash.com/photo-1520286851410-612663964177?w=800' }
     ]
 };
 
