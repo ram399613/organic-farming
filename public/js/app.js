@@ -64,7 +64,8 @@ const app = {
                             <span class="organic-badge">Organic</span>
                             <img src="${p.imageUrl}" 
                                  class="product-img" 
-                                 alt="${p.name}">
+                                 alt="${p.name}"
+                                 onerror="this.parentElement.style.display='none';">
                             <div class="product-info">
                                 <h3>${p.name}</h3>
                                 <div class="product-footer">
