@@ -3,13 +3,13 @@ const bcrypt = require('bcryptjs');
 
 const POOLS = {
     Fruits: [
-        { name: 'Gala Apple', img: 'https://images.unsplash.com/photo-1560806887-1e4cd0b6bccb?w=800' },
-        { name: 'Cavendish Banana', img: 'https://images.unsplash.com/photo-1571771894821-ad9b58865c9d?w=800' },
+        { name: 'Gala Apple', img: 'https://images.unsplash.com/photo-1618897996318-5a901fa6ca3f?w=800' },
+        { name: 'Cavendish Banana', img: 'https://images.unsplash.com/photo-1611080626919-7cf5a9dcab5b?w=800' },
         { name: 'Honey Pineapple', img: 'https://images.unsplash.com/photo-1550258987-190a2d41a8ba?w=800' },
         { name: 'Alphonso Mango', img: 'https://images.unsplash.com/photo-1553279768-865429fa0078?w=800' },
         { name: 'Red Globe Grapes', img: 'https://images.unsplash.com/photo-1537640538966-79f369b41e8f?w=800' },
         { name: 'Hass Avocado', img: 'https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?w=800' },
-        { name: 'Garden Strawberry', img: 'https://images.unsplash.com/photo-1464965911861-746a04b4bca6?w=800' },
+        { name: 'Garden Strawberry', img: 'https://images.unsplash.com/photo-1618898909019-010e4e234c55?w=800' },
         { name: 'Wild Blueberry', img: 'https://images.unsplash.com/photo-1498557850523-fd3d118b962e?w=800' },
         { name: 'Yellow Peach', img: 'https://images.unsplash.com/photo-1519996529931-28324d5a630e?w=800' },
         { name: 'Black Plum', img: 'https://images.unsplash.com/photo-1610832958506-aa56368176cf?w=800' },
@@ -41,7 +41,7 @@ const POOLS = {
         { name: 'Cultured Butter', img: 'https://images.unsplash.com/photo-1528740096961-3798add19cb7?w=800' },
         { name: 'Heavy Cream', img: 'https://images.unsplash.com/photo-1553909489-cd47e0907980?w=800' },
         { name: 'Pure Ghee', img: 'https://images.unsplash.com/photo-1631709497146-a239ef373cf1?w=800' },
-        { name: 'Fresh Paneer', img: 'https://images.unsplash.com/photo-1564149504294-81c62f927ed9?w=800' },
+        { name: 'Paneer Block', img: 'https://images.unsplash.com/photo-1564149504294-81c62f927ed9?w=800' },
         { name: 'Goat Milk', img: 'https://images.unsplash.com/photo-1517331156700-3c241d2b4d83?w=800' },
         { name: 'Mozzarella', img: 'https://images.unsplash.com/photo-1559561853-08451507cbe7?w=800' },
         { name: 'Feta Cheese', img: 'https://images.unsplash.com/photo-1553531384-cc64ac80f931?w=800' },
@@ -100,7 +100,7 @@ class LocalStore {
         items.forEach((item, i) => {
             this.products.push({
                 _id: 'p' + (pCount++),
-                name: `Fresh ${item.name}`,
+                name: item.name.startsWith('Fresh') ? item.name : `Fresh ${item.name}`,
                 category: cat,
                 price: 50 + (i * 12) + (Math.floor(Math.random() * 50)),
                 description: `Experience the difference with our organic ${item.name.toLowerCase()}. 100% certified organic and farm-fresh from the heart of the valley.`,
