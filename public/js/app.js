@@ -272,9 +272,44 @@ const app = {
         const input = document.getElementById('chatInput');
         const msg = input.value.trim();
         if (!msg) return;
+
         this.appendMessage('user', msg);
         input.value = '';
-        setTimeout(() => this.appendMessage('bot', "I'm analyzing your request about organic farming..."), 500);
+
+        // Show "typing" indicator
+        const typingId = 'bot-typing-' + Date.now();
+        const container = document.getElementById('chat-messages');
+        const div = document.createElement('div');
+        div.className = 'msg bot typing';
+        div.id = typingId;
+        div.innerText = "...";
+        container.appendChild(div);
+        container.scrollTop = container.scrollHeight;
+
+        // Simulate AI thinking
+        setTimeout(() => {
+            document.getElementById(typingId).remove();
+            let reply = "That's a great question about organic farming! Could you please be more specific so I can help you better?";
+            const text = msg.toLowerCase();
+
+            if (text.includes('hello') || text.includes('hi')) {
+                reply = "Hello! I'm AgriBot. How can I help you with organic farming today?";
+            } else if (text.includes('soil')) {
+                reply = "Soil health is key! We recommend crop rotation and using vermicompost to keep your soil rich in nutrients.";
+            } else if (text.includes('pest') || text.includes('insect')) {
+                reply = "For organic pest control, try Neem oil or companion planting with marigolds. They work wonders without chemicals!";
+            } else if (text.includes('price') || text.includes('cost')) {
+                reply = "Our organic products are priced competitively to support local farmers. You can find all prices in the Market section.";
+            } else if (text.includes('buy') || text.includes('market')) {
+                reply = "You can browse and buy fresh organic produce in our Marketplace! Just click 'Market' in the menu.";
+            } else if (text.includes('farmer') || text.includes('sell')) {
+                reply = "Are you a farmer? You can register in the 'Farmer Portal' to start selling your organic products here!";
+            } else if (text.includes('water') || text.includes('irrigation')) {
+                reply = "Sustainable water use is vital. Drip irrigation and mulching are the best ways to conserve water in organic farms.";
+            }
+
+            this.appendMessage('bot', reply);
+        }, 1000);
     },
 
     appendMessage(sender, text) {

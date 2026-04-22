@@ -50,7 +50,75 @@ body { background-color: var(--bg-dark); color: var(--text-main); overflow-x: hi
 .add-btn { width: 45px; height: 45px; background: var(--primary); border: none; border-radius: 50%; color: white; font-size: 1.2rem; cursor: pointer; box-shadow: 0 5px 15px var(--primary-glow); }
 
 /* Education View */
-.edu-grid a { color: var(--primary); font-weight: 700; text-decoration: none; margin-top: 1rem; display: inline-block; }
+.edu-main-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+    gap: 3rem;
+    margin-top: 2rem;
+}
+
+.edu-article {
+    background: var(--bg-navy);
+    border: 1px solid var(--glass-border);
+    padding: 3rem;
+    border-radius: var(--radius-xl);
+    position: relative;
+    transition: var(--transition);
+}
+
+.edu-article:hover {
+    border-color: var(--primary);
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+}
+
+.article-badge {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    background: var(--primary-glow);
+    color: var(--primary);
+    padding: 0.4rem 1rem;
+    border-radius: 50px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.edu-article h2 {
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    color: var(--primary);
+}
+
+.edu-list {
+    margin: 1.5rem 0;
+    list-style: none;
+}
+
+.edu-list li {
+    margin-bottom: 1rem;
+    padding-left: 1.5rem;
+    position: relative;
+    color: var(--text-dim);
+}
+
+.edu-list li::before {
+    content: '🌱';
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+.edu-list li b {
+    color: var(--text-main);
+    display: block;
+}
+
+@media (max-width: 768px) {
+    .edu-main-grid { grid-template-columns: 1fr; }
+    .edu-article { padding: 2rem; }
+}
 
 /* Dashboards */
 .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin: 2rem 0; }
