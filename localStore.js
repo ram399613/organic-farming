@@ -77,7 +77,7 @@ class LocalStore {
                     category: cat,
                     price: 45 + (i * 15),
                     imageUrl: item.img,
-                    farmerId: f1
+                    farmerId: 'farmer_1'
                 });
             });
         });
