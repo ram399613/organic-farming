@@ -127,27 +127,46 @@ const app = {
 
     navigate(view) {
         this.currentView = view;
-        const views = ['home', 'market', 'login', 'explore'];
-        
-        views.forEach(v => {
-            const el = document.getElementById(`${v}-view`);
-            if (el) el.style.display = (v === view) ? 'block' : 'none';
-            
-            const link = document.getElementById(`link-${v}`);
-            if (link) {
-                if (v === view) link.classList.add('active');
-                else link.classList.remove('active');
-            }
+        const banner = document.getElementById('home-banner');
+        const title = document.getElementById('view-title');
+        const links = ['home', 'market', 'explore'];
+
+        // Update links
+        links.forEach(l => {
+            const el = document.getElementById(`link-${l}`);
+            if (el) el.classList.toggle('active', l === view);
         });
 
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        
-        if (view === 'market') {
+        if (view === 'home') {
+            banner.style.display = 'block';
+            title.innerText = 'Featured Freshness';
+            this.fetchProducts(); // Show all for home
+        } else if (view === 'market') {
+            banner.style.display = 'none';
+            title.innerText = 'Full Marketplace';
             this.fetchProducts();
+        } else if (view === 'explore') {
+            banner.style.display = 'none';
+            title.innerText = 'Explore Organic Stories';
+            // For demo, maybe filter to grains/dairy for "Explore"
+            document.getElementById('categoryFilter').value = 'Grains';
+            this.fetchProducts();
+        } else if (view === 'login') {
+            this.openLogin();
         }
 
-        // Re-trigger reveal animations for new view
+        window.scrollTo({ top: 0, behavior: 'smooth' });
         setTimeout(() => this.revealOnScroll(), 100);
+    },
+
+    openLogin() {
+        const modal = document.getElementById('login-modal');
+        if (modal) modal.style.display = 'flex';
+    },
+
+    closeLogin() {
+        const modal = document.getElementById('login-modal');
+        if (modal) modal.style.display = 'none';
     },
 
     toggleChat() {
@@ -174,12 +193,12 @@ const app = {
             const data = await res.json();
             this.appendMessage('bot', data.reply || "I'm processing your request!");
         } catch (err) {
-            this.appendMessage('bot', "I'm having trouble connecting right now, but I'm here to help!");
+            this.appendMessage('bot', "I'm here to help you find the best organic products!");
         }
     },
 
     appendMessage(sender, text) {
-        const container = document.getElementById('chatMessages') || document.getElementById('chat-messages');
+        const container = document.getElementById('chat-messages');
         const div = document.createElement('div');
         div.className = `msg ${sender}`;
         div.innerText = text;
@@ -191,9 +210,10 @@ const app = {
         e.preventDefault();
         this.showToast("Signing you in...");
         setTimeout(() => {
-            this.showToast("Login successful! Welcome back.");
+            this.showToast("Welcome back!");
+            this.closeLogin();
             this.navigate('home');
-        }, 1500);
+        }, 1200);
     }
 };
 
