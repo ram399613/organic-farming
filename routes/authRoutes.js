@@ -12,7 +12,7 @@ router.post('/register', async (req, res) => {
     const { name, email, password, role } = req.body;
     if (await localStore.findUserByEmail(email)) return res.status(400).json({ message: 'User already exists' });
     
-    const user = await localStore.createUser({ name, email, password, role });
+    const user = await localStore.registerUser({ name, email, password, role });
     
     res.status(201).json({ token: generateToken(user._id), user: { id: user._id, name: user.name, role: user.role, isApproved: user.isApproved } });
   } catch (error) {

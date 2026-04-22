@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Organic Connect | Premium Marketplace</title>
+    <title>Organic Farming Hub | Sustainable Agriculture Platform</title>
     <link rel="stylesheet" href="css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 </head>
@@ -13,48 +13,53 @@
 
     <nav class="glass-nav">
         <div class="nav-container">
-            <a href="#" class="logo" onclick="app.navigate('home')">Organic Connect</a>
+            <a href="#" class="logo" onclick="app.navigate('home')">Organic Farming Hub</a>
             <ul class="nav-links">
                 <li><a href="#" id="link-home" onclick="app.navigate('home')">Home</a></li>
                 <li><a href="#" id="link-market" onclick="app.navigate('market')">Market</a></li>
-                <li><a href="#" id="link-explore" onclick="app.navigate('explore')">Explore</a></li>
+                <li><a href="#" id="link-education" onclick="app.navigate('education')">Learning</a></li>
+                <li><a href="#" id="link-farmer" onclick="app.navigate('farmer')">Farmer Portal</a></li>
             </ul>
             <div class="nav-actions">
                 <div class="cart-icon" onclick="app.toggleCart()">
                     🛒<span id="cart-count" class="cart-count">0</span>
                 </div>
-                <button class="btn-signin" onclick="app.navigate('login')">Sign In</button>
+                <button id="auth-btn" class="btn-signin" onclick="app.navigate('login')">Sign In</button>
             </div>
         </div>
     </nav>
 
     <main>
-        <!-- UNIFIED VIEW SECTION -->
-        <div id="main-view">
-            <!-- EDUCATIONAL BACKGROUND SECTION (For Home/Explore) -->
-            <div id="edu-section" class="edu-background" style="display: none;">
+        <!-- HOME VIEW -->
+        <div id="home-view" class="view-section">
+            <div class="edu-background">
                 <div class="edu-overlay">
-                    <div id="edu-content" class="edu-card reveal">
-                        <!-- Content dynamic via JS -->
+                    <div class="edu-card reveal">
+                        <h1>Welcome to <span class="text-gradient">Organic Farming Hub</span></h1>
+                        <p>Your complete ecosystem for sustainable agriculture. Explore premium products, learn from experts, and support local farmers.</p>
+                        <div class="hero-btns" style="margin-top: 2rem; display: flex; gap: 1rem; justify-content: center;">
+                            <button class="btn-primary" onclick="app.navigate('market')">Explore Marketplace</button>
+                            <button class="btn-outline" onclick="app.navigate('education')">Start Learning</button>
+                        </div>
                     </div>
                 </div>
             </div>
-
+            
             <div class="container">
-                <!-- BANNER (Only for Home) -->
-                <div id="home-banner" class="home-banner reveal">
-                    <div class="banner-content">
-                        <h1>Welcome to <span class="text-gradient">Organic Connect</span></h1>
-                        <p>Connecting you directly with local organic farmers for a sustainable future.</p>
-                        <button class="btn-primary" onclick="app.navigate('market')">Start Shopping</button>
-                    </div>
+                <div class="category-header reveal">
+                    <h2 class="category-title">Featured Products</h2>
                 </div>
+                <div id="featured-grid" class="product-grid"></div>
+            </div>
+        </div>
 
-                <!-- SEARCH SECTION (Shared) -->
+        <!-- MARKET VIEW -->
+        <div id="market-view" class="view-section" style="display: none;">
+            <div class="container">
                 <section class="search-section">
-                    <h1 id="view-title" style="margin-bottom: 2rem; font-size: 2.5rem;">Marketplace</h1>
+                    <h1>Sustainable Marketplace</h1>
                     <div class="search-box">
-                        <input type="text" id="searchBar" class="search-input" placeholder="Search fresh produce..." onkeyup="app.fetchProducts()">
+                        <input type="text" id="searchBar" class="search-input" placeholder="Search by name or location..." onkeyup="app.fetchProducts()">
                         <select id="categoryFilter" class="category-filter" onchange="app.fetchProducts()">
                             <option value="All">All Categories</option>
                             <option value="Fruits">Fruits</option>
@@ -64,65 +69,107 @@
                         </select>
                     </div>
                 </section>
-
-                <!-- CONTENT SECTION (Shared) -->
                 <div id="market-content">
                     <div id="category-groups"></div>
                 </div>
             </div>
         </div>
 
+        <!-- EDUCATION VIEW -->
+        <div id="education-view" class="view-section" style="display: none;">
+            <div class="container" style="padding-top: 120px;">
+                <h1 class="category-title">Learning Center</h1>
+                <div class="edu-grid">
+                    <div class="edu-card reveal">
+                        <h3>Soil Health</h3>
+                        <p>Learn how to maintain nutrient-rich soil without synthetic fertilizers.</p>
+                        <a href="#">Read Guide →</a>
+                    </div>
+                    <div class="edu-card reveal">
+                        <h3>Natural Pest Control</h3>
+                        <p>Protect your crops using companion planting and organic repellents.</p>
+                        <a href="#">Read Guide →</a>
+                    </div>
+                    <div class="edu-card reveal">
+                        <h3>Sustainable Irrigation</h3>
+                        <p>Water management techniques for drought-resistant farming.</p>
+                        <a href="#">Read Guide →</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FARMER PORTAL VIEW -->
+        <div id="farmer-view" class="view-section" style="display: none;">
+            <div class="container" style="padding-top: 120px;">
+                <div id="farmer-dashboard" style="display: none;">
+                    <h1 class="category-title">Farmer Dashboard</h1>
+                    <div class="stats-row">
+                        <div class="stat-card"><h3>Orders</h3><p id="farmer-orders">0</p></div>
+                        <div class="stat-card"><h3>Sales</h3><p id="farmer-sales">₹0</p></div>
+                    </div>
+                    <button class="btn-primary" onclick="app.openAddProduct()">Add New Product</button>
+                </div>
+                <div id="farmer-onboarding">
+                    <h1 class="category-title">Become a Proposer</h1>
+                    <p style="margin-bottom: 2rem;">Join our community of certified organic farmers.</p>
+                    <form onsubmit="app.handleFarmerSignup(event)" class="auth-card" style="max-width: 600px; margin: 0 auto;">
+                        <div class="input-group"><label>Farm Name</label><input type="text" required></div>
+                        <div class="input-group"><label>Location (City/State)</label><input type="text" required></div>
+                        <div class="input-group"><label>Certification Details</label><textarea required></textarea></div>
+                        <button type="submit" class="btn-primary" style="width: 100%;">Submit Registration</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- ADMIN VIEW -->
+        <div id="admin-view" class="view-section" style="display: none;">
+            <div class="container" style="padding-top: 120px;">
+                <h1 class="category-title">Admin Console</h1>
+                <div id="pending-farmers">
+                    <h3>Pending Farmer Approvals</h3>
+                    <div id="approval-list"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODALS -->
+        <div id="login-modal" class="modal" style="display: none;">
+            <div class="modal-content auth-card">
+                <button class="close-btn" onclick="app.closeLogin()">×</button>
+                <h2 id="auth-title">Sign In</h2>
+                <form onsubmit="app.handleAuth(event)">
+                    <div class="input-group"><label>Email</label><input type="email" id="auth-email" required></div>
+                    <div class="input-group"><label>Password</label><input type="password" id="auth-pass" required></div>
+                    <div id="role-select" class="input-group" style="display: none;">
+                        <label>Role</label>
+                        <select id="auth-role"><option value="user">Buyer</option><option value="farmer">Farmer</option></select>
+                    </div>
+                    <button type="submit" class="btn-primary" style="width: 100%;">Continue</button>
+                </form>
+                <p style="margin-top: 1rem; cursor: pointer;" onclick="app.toggleAuthMode()">Don't have an account? Signup</p>
+            </div>
+        </div>
+
         <!-- CART SIDEBAR -->
         <div id="cart-sidebar" class="sidebar" style="display: none;">
-            <div class="sidebar-header">
-                <h2>Your Basket</h2>
-                <button class="close-btn" onclick="app.toggleCart()">×</button>
-            </div>
-            <div id="cart-items" class="cart-items">
-                <!-- Dynamic cart items -->
-            </div>
+            <div class="sidebar-header"><h2>Your Basket</h2><button class="close-btn" onclick="app.toggleCart()">×</button></div>
+            <div id="cart-items"></div>
             <div class="cart-footer">
                 <div class="cart-total">Total: ₹<span id="total-amount">0</span></div>
                 <button class="btn-primary checkout-btn" onclick="app.checkout()">Checkout Now</button>
             </div>
         </div>
-
-        <!-- LOGIN MODAL -->
-        <div id="login-modal" class="modal" style="display: none;">
-            <div class="modal-content auth-card reveal">
-                <button class="close-btn" onclick="app.closeLogin()">×</button>
-                <h2>Sign In</h2>
-                <p>Welcome back to the farm</p>
-                <form onsubmit="app.handleLogin(event)">
-                    <div class="input-group">
-                        <label>Email</label>
-                        <input type="email" required placeholder="farmer@example.com">
-                    </div>
-                    <div class="input-group">
-                        <label>Password</label>
-                        <input type="password" required placeholder="••••••••">
-                    </div>
-                    <button type="submit" class="btn-primary" style="width: 100%; margin-top: 1rem;">Continue</button>
-                </form>
-            </div>
-        </div>
     </main>
 
     <!-- CHATBOT -->
-    <div id="chatbot-trigger" onclick="app.toggleChat()">
-        <span class="chat-icon">💬</span>
-    </div>
-
+    <div id="chatbot-trigger" onclick="app.toggleChat()"><span class="chat-icon">💬</span></div>
     <div id="chatbot-window" style="display: none;">
-        <div class="chat-header">
-            <h3>AgriBot Assistant</h3>
-            <button onclick="app.toggleChat()">×</button>
-        </div>
-        <div id="chat-messages">
-            <div class="msg bot">Hello! How can I help you today with your organic shopping?</div>
-        </div>
+        <div class="chat-header"><h3>AgriBot Assistant</h3><button onclick="app.toggleChat()">×</button></div>
+        <div id="chat-messages"></div>
         <div class="chat-input-wrap">
-            <input type="text" id="chatInput" placeholder="Ask about products..." onkeypress="if(event.key==='Enter') app.sendChat()">
+            <input type="text" id="chatInput" placeholder="Ask about organic farming..." onkeypress="if(event.key==='Enter') app.sendChat()">
             <button onclick="app.sendChat()">Send</button>
         </div>
     </div>

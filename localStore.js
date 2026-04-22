@@ -62,11 +62,10 @@ class LocalStore {
     }
 
     init() {
-        const f1 = 'farmer_1';
         this.users = [
-            { _id: 'admin_1', name: 'Admin', email: 'admin@organic.com', password: bcrypt.hashSync('password', 10), role: 'admin', isApproved: true },
-            { _id: f1, name: 'Valley Farms', email: 'farmer@organic.com', password: bcrypt.hashSync('password', 10), role: 'farmer', isApproved: true },
-            { _id: 'user_1', name: 'John Doe', email: 'user@organic.com', password: bcrypt.hashSync('password', 10), role: 'user', isApproved: true }
+            { _id: 'admin_1', name: 'Platform Admin', email: 'admin@organic.com', password: bcrypt.hashSync('password', 10), role: 'admin', isApproved: true },
+            { _id: 'farmer_1', name: 'Green Valley Farms', email: 'farmer@organic.com', password: bcrypt.hashSync('password', 10), role: 'farmer', isApproved: true, location: 'Himachal Pradesh' },
+            { _id: 'user_1', name: 'John Buyer', email: 'user@organic.com', password: bcrypt.hashSync('password', 10), role: 'user', isApproved: true }
         ];
 
         let pCount = 0;
@@ -97,6 +96,18 @@ class LocalStore {
     }
 
     async findUserByEmail(e) { return this.users.find(u => u.email === e); }
+    
+    async registerUser(userData) {
+        const newUser = { 
+            _id: 'u' + Date.now(), 
+            ...userData, 
+            password: bcrypt.hashSync(userData.password, 10),
+            isApproved: userData.role !== 'farmer' // Farmers need approval
+        };
+        this.users.push(newUser);
+        return newUser;
+    }
+
     async createOrder(o) {
         const order = { ...o, _id: 'o' + Date.now(), createdAt: new Date() };
         this.orders.push(order);

@@ -2,13 +2,17 @@ const API_URL = '/api';
 
 const app = {
     cart: [],
+    user: null,
+    authMode: 'login', // 'login' or 'signup'
     currentView: 'home',
 
     init() {
         this.fetchProducts();
         this.hideLoader();
         this.updateCartCount();
+        this.checkAuth();
         window.addEventListener('scroll', () => this.revealOnScroll());
+        this.navigate('home');
     },
 
     hideLoader() {
@@ -21,16 +25,49 @@ const app = {
         }
     },
 
+    checkAuth() {
+        const token = localStorage.getItem('token');
+        if (token) {
+            // In a real app, verify token. Here we'll just mock it.
+            const savedUser = JSON.parse(localStorage.getItem('user'));
+            if (savedUser) {
+                this.user = savedUser;
+                this.updateAuthUI();
+            }
+        }
+    },
+
+    updateAuthUI() {
+        const btn = document.getElementById('auth-btn');
+        if (this.user) {
+            btn.innerText = `Hi, ${this.user.name.split(' ')[0]}`;
+            btn.onclick = () => this.handleLogout();
+        } else {
+            btn.innerText = 'Sign In';
+            btn.onclick = () => this.navigate('login');
+        }
+    },
+
+    handleLogout() {
+        this.user = null;
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        this.updateAuthUI();
+        this.navigate('home');
+        this.showToast("Signed out successfully");
+    },
+
     async fetchProducts() {
-        const searchBar = document.getElementById('searchBar');
-        const categoryFilter = document.getElementById('categoryFilter');
-        const search = searchBar ? searchBar.value : '';
-        const category = categoryFilter ? categoryFilter.value : 'All';
+        const sb = document.getElementById('searchBar');
+        const cf = document.getElementById('categoryFilter');
+        const search = sb ? sb.value : '';
+        const category = cf ? cf.value : 'All';
         
         try {
             const res = await fetch(`${API_URL}/products?search=${search}&category=${category}`);
             const products = await res.json();
             this.renderProducts(products);
+            if (this.currentView === 'home') this.renderFeatured(products);
         } catch (err) {
             console.error('Fetch error:', err);
         }
@@ -41,11 +78,6 @@ const app = {
         if (!container) return;
         container.innerHTML = '';
 
-        if (products.length === 0) {
-            container.innerHTML = '<div style="text-align:center; padding:5rem; color:var(--text-dim);">No products found. Try a different search.</div>';
-            return;
-        }
-
         const groups = products.reduce((acc, p) => {
             if (!acc[p.category]) acc[p.category] = [];
             acc[p.category].push(p);
@@ -55,101 +87,158 @@ const app = {
         Object.keys(groups).forEach(cat => {
             const groupHtml = `
                 <div class="category-header reveal">
-                    <div class="category-title-wrap">
-                        <h2 class="category-title">${cat}</h2>
-                        <div class="title-underline"></div>
-                    </div>
-                    <span class="item-count">${groups[cat].length} Items</span>
+                    <h2 class="category-title">${cat}</h2>
+                    <div class="title-underline"></div>
                 </div>
                 <div class="product-grid">
-                    ${groups[cat].map(p => `
-                        <div class="product-card reveal">
-                            <span class="organic-badge">Organic</span>
-                            <img src="${p.imageUrl}" 
-                                 class="product-img" 
-                                 alt="${p.name}"
-                                 onerror="this.parentElement.style.display='none';">
-                            <div class="product-info">
-                                <h3>${p.name}</h3>
-                                <div class="product-footer">
-                                    <span class="price">₹${p.price}</span>
-                                    <button class="add-btn" onclick="app.addToCart('${p._id}', '${p.name}', ${p.price})">+</button>
-                                </div>
-                            </div>
-                        </div>
-                    `).join('')}
+                    ${groups[cat].map(p => this.createProductCard(p)).join('')}
                 </div>
             `;
             container.insertAdjacentHTML('beforeend', groupHtml);
         });
-
         setTimeout(() => this.revealOnScroll(), 100);
+    },
+
+    renderFeatured(products) {
+        const container = document.getElementById('featured-grid');
+        if (!container) return;
+        container.innerHTML = products.slice(0, 3).map(p => this.createProductCard(p)).join('');
+    },
+
+    createProductCard(p) {
+        return `
+            <div class="product-card reveal">
+                <span class="organic-badge">Organic</span>
+                <img src="${p.imageUrl}" class="product-img" alt="${p.name}" onerror="this.src='https://images.unsplash.com/photo-1610348725531-843dff563e2c?w=500'">
+                <div class="product-info">
+                    <h3>${p.name}</h3>
+                    <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 0.5rem;">📍 ${p.location || 'Organic Farm, India'}</p>
+                    <div class="product-footer">
+                        <span class="price">₹${p.price}</span>
+                        <button class="add-btn" onclick="app.addToCart('${p._id}', '${p.name}', ${p.price})">+</button>
+                    </div>
+                </div>
+            </div>
+        `;
+    },
+
+    navigate(view) {
+        this.currentView = view;
+        const views = ['home', 'market', 'education', 'farmer', 'admin'];
+        
+        views.forEach(v => {
+            const el = document.getElementById(`${v}-view`);
+            if (el) el.style.display = (v === view) ? 'block' : 'none';
+            const link = document.getElementById(`link-${v}`);
+            if (link) link.classList.toggle('active', v === view);
+        });
+
+        if (view === 'login') this.openLogin();
+        
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        setTimeout(() => this.revealOnScroll(), 100);
+    },
+
+    openLogin() {
+        document.getElementById('login-modal').style.display = 'flex';
+    },
+
+    closeLogin() {
+        document.getElementById('login-modal').style.display = 'none';
+    },
+
+    toggleAuthMode() {
+        this.authMode = (this.authMode === 'login') ? 'signup' : 'login';
+        document.getElementById('auth-title').innerText = (this.authMode === 'login') ? 'Sign In' : 'Create Account';
+        document.getElementById('role-select').style.display = (this.authMode === 'signup') ? 'block' : 'none';
+    },
+
+    async handleAuth(e) {
+        e.preventDefault();
+        const email = document.getElementById('auth-email').value;
+        const pass = document.getElementById('auth-pass').value;
+        const role = document.getElementById('auth-role').value;
+
+        try {
+            const endpoint = (this.authMode === 'login') ? '/api/auth/login' : '/api/auth/register';
+            const body = (this.authMode === 'login') ? { email, password: pass } : { email, password: pass, name: email.split('@')[0], role };
+            
+            const res = await fetch(endpoint, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+            const data = await res.json();
+
+            if (res.ok) {
+                this.user = data.user;
+                localStorage.setItem('token', data.token);
+                localStorage.setItem('user', JSON.stringify(data.user));
+                this.updateAuthUI();
+                this.closeLogin();
+                this.showToast(`Welcome back, ${this.user.name}!`);
+                if (this.user.role === 'farmer') this.navigate('farmer');
+                if (this.user.role === 'admin') this.navigate('admin');
+            } else {
+                this.showToast(data.message || "Auth failed");
+            }
+        } catch (err) {
+            this.showToast("Connection error");
+        }
+    },
+
+    handleFarmerSignup(e) {
+        e.preventDefault();
+        this.showToast("Registration submitted! Pending admin approval.");
+        setTimeout(() => this.navigate('home'), 1500);
     },
 
     addToCart(id, name, price) {
         const existing = this.cart.find(item => item.id === id);
         if (existing) {
-            existing.qty = (existing.qty || 1) + 1;
+            existing.qty++;
         } else {
             this.cart.push({ id, name, price, qty: 1 });
         }
         this.updateCartCount();
-        this.showToast(`Added ${name} to basket!`);
         this.renderCart();
+        this.showToast(`Added ${name} to basket`);
     },
 
-    removeFromCart(index) {
-        this.cart.splice(index, 1);
+    renderCart() {
+        const container = document.getElementById('cart-items');
+        const totalEl = document.getElementById('total-amount');
+        if (!container) return;
+        container.innerHTML = this.cart.map((item, idx) => `
+            <div class="cart-item">
+                <div class="item-info"><h4>${item.name}</h4><p>₹${item.price} x ${item.qty}</p></div>
+                <button class="remove-btn" onclick="app.removeFromCart(${idx})">🗑️</button>
+            </div>
+        `).join('');
+        const total = this.cart.reduce((acc, item) => acc + (item.price * item.qty), 0);
+        totalEl.innerText = total;
+    },
+
+    removeFromCart(idx) {
+        this.cart.splice(idx, 1);
         this.updateCartCount();
         this.renderCart();
     },
 
     updateCartCount() {
         const count = document.getElementById('cart-count');
-        if (count) {
-            const totalQty = this.cart.reduce((acc, item) => acc + (item.qty || 1), 0);
-            count.innerText = totalQty;
-        }
-    },
-
-    renderCart() {
-        const container = document.getElementById('cart-items');
-        const totalEl = document.getElementById('total-amount');
-        if (!container || !totalEl) return;
-        container.innerHTML = '';
-        
-        let total = 0;
-        this.cart.forEach((item, index) => {
-            total += item.price * (item.qty || 1);
-            container.innerHTML += `
-                <div class="cart-item">
-                    <div class="item-info">
-                        <h4>${item.name}</h4>
-                        <p>₹${item.price} x ${item.qty || 1}</p>
-                    </div>
-                    <button class="remove-btn" onclick="app.removeFromCart(${index})">🗑️</button>
-                </div>
-            `;
-        });
-        
-        totalEl.innerText = total;
-        if (this.cart.length === 0) {
-            container.innerHTML = '<div style="text-align:center; padding:2rem; color:var(--text-dim);">Your basket is empty.</div>';
-        }
+        if (count) count.innerText = this.cart.reduce((acc, item) => acc + item.qty, 0);
     },
 
     toggleCart() {
         const sidebar = document.getElementById('cart-sidebar');
-        if (sidebar) {
-            const isHidden = sidebar.style.display === 'none';
-            sidebar.style.display = isHidden ? 'flex' : 'none';
-            if (isHidden) this.renderCart();
-        }
+        sidebar.style.display = (sidebar.style.display === 'none') ? 'flex' : 'none';
+        if (sidebar.style.display === 'flex') this.renderCart();
     },
 
     checkout() {
-        if (this.cart.length === 0) return this.showToast("Your basket is empty!");
-        this.showToast("Thank you for supporting organic farmers!");
+        if (this.cart.length === 0) return this.showToast("Basket is empty");
+        this.showToast("Order placed successfully! Connecting with farmers...");
         this.cart = [];
         this.updateCartCount();
         this.toggleCart();
@@ -157,19 +246,9 @@ const app = {
 
     showToast(msg) {
         const container = document.getElementById('toast-container');
-        if (!container) return;
         const toast = document.createElement('div');
         toast.className = 'toast';
-        toast.style.cssText = `
-            background: #1e293b;
-            color: white;
-            padding: 1rem 2rem;
-            border-radius: 12px;
-            margin-top: 1rem;
-            border-left: 4px solid var(--primary);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-            animation: slideIn 0.3s ease-out;
-        `;
+        toast.style.cssText = `background:#1e293b; color:white; padding:1rem 2rem; border-radius:12px; margin-top:1rem; border-left:4px solid var(--primary); box-shadow:0 10px 20px rgba(0,0,0,0.3); animation:slideIn 0.3s ease-out;`;
         toast.innerText = msg;
         container.appendChild(toast);
         setTimeout(() => toast.remove(), 3000);
@@ -180,131 +259,31 @@ const app = {
         reveals.forEach(el => {
             const windowHeight = window.innerHeight;
             const elementTop = el.getBoundingClientRect().top;
-            if (elementTop < windowHeight - 50) {
-                el.classList.add('active');
-            }
+            if (elementTop < windowHeight - 50) el.classList.add('active');
         });
-    },
-
-    navigate(view) {
-        this.currentView = view;
-        const banner = document.getElementById('home-banner');
-        const title = document.getElementById('view-title');
-        const eduSection = document.getElementById('edu-section');
-        const eduContent = document.getElementById('edu-content');
-        const searchSection = document.querySelector('.search-section');
-        const links = ['home', 'market', 'explore'];
-
-        // Reset search bar and filters for new view
-        const sb = document.getElementById('searchBar');
-        const cf = document.getElementById('categoryFilter');
-        if (sb) sb.value = '';
-        if (cf) cf.value = 'All';
-
-        // Update links
-        links.forEach(l => {
-            const el = document.getElementById(`link-${l}`);
-            if (el) el.classList.toggle('active', l === view);
-        });
-
-        if (view === 'home') {
-            if (banner) banner.style.display = 'block';
-            if (eduSection) eduSection.style.display = 'block';
-            if (title) title.innerText = 'Featured Freshness';
-            if (eduContent) {
-                eduContent.innerHTML = `
-                    <h2>Organic Farming: The Future</h2>
-                    <p>Organic farming involves the cultivation of plants in natural ways, avoiding synthetic substances to maintain soil fertility and ecological balance.</p>
-                    <ul style="margin-top: 1rem; text-align: left; padding-left: 1.5rem; color: var(--text-dim);">
-                        <li>No Synthetic Pesticides</li>
-                        <li>Soil Health & Biodiversity</li>
-                        <li>Eco-friendly & Sustainable</li>
-                    </ul>
-                `;
-            }
-            this.fetchProducts(); 
-        } else if (view === 'market') {
-            if (banner) banner.style.display = 'none';
-            if (eduSection) eduSection.style.display = 'none';
-            if (title) title.innerText = 'Full Marketplace';
-            this.fetchProducts();
-        } else if (view === 'explore') {
-            if (banner) banner.style.display = 'none';
-            if (eduSection) eduSection.style.display = 'block';
-            if (title) title.innerText = 'Explore Sustainable Grains';
-            if (eduContent) {
-                eduContent.innerHTML = `
-                    <h2>Sustainable Grains</h2>
-                    <p>Our farmers use traditional crop rotation to ensure nutrient density. By choosing organic, you're supporting soil regeneration.</p>
-                    <div style="margin-top: 1rem; display: flex; gap: 1rem; justify-content: center;">
-                        <div class="stat"><b>100%</b><br>Natural</div>
-                        <div class="stat"><b>0%</b><br>Chemicals</div>
-                    </div>
-                `;
-            }
-            if (cf) cf.value = 'Grains';
-            this.fetchProducts();
-        } else if (view === 'login') {
-            this.openLogin();
-        }
-
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        setTimeout(() => this.revealOnScroll(), 100);
-    },
-
-    openLogin() {
-        const modal = document.getElementById('login-modal');
-        if (modal) modal.style.display = 'flex';
-    },
-
-    closeLogin() {
-        const modal = document.getElementById('login-modal');
-        if (modal) modal.style.display = 'none';
     },
 
     toggleChat() {
         const chat = document.getElementById('chatbot-window');
-        if (chat) {
-            chat.style.display = (chat.style.display === 'none') ? 'flex' : 'none';
-        }
+        chat.style.display = (chat.style.display === 'none') ? 'flex' : 'none';
     },
 
     async sendChat() {
         const input = document.getElementById('chatInput');
         const msg = input.value.trim();
         if (!msg) return;
-
         this.appendMessage('user', msg);
         input.value = '';
-
-        try {
-            const res = await fetch(`${API_URL}/ai/chat`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: msg })
-            });
-            const data = await res.json();
-            this.appendMessage('bot', data.reply || "I'm processing your request!");
-        } catch (err) {
-            this.appendMessage('bot', "I'm here to help you find the best organic products!");
-        }
+        setTimeout(() => this.appendMessage('bot', "I'm analyzing your request about organic farming..."), 500);
     },
 
     appendMessage(sender, text) {
         const container = document.getElementById('chat-messages');
-        if (!container) return;
         const div = document.createElement('div');
         div.className = `msg ${sender}`;
         div.innerText = text;
         container.appendChild(div);
         container.scrollTop = container.scrollHeight;
-    },
-
-    async handleLogin(e) {
-        e.preventDefault();
-        this.showToast("Welcome back!");
-        this.closeLogin();
-        this.navigate('home');
     }
 };
 
