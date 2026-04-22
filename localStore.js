@@ -2,11 +2,11 @@ const bcrypt = require('bcryptjs');
 
 const POOLS = {
     Fruits: [
-        { name: 'Apple', img: 'https://images.unsplash.com/photo-1560806887-1e4cd0b6bccb?w=800' },
-        { name: 'Banana', img: 'https://images.unsplash.com/photo-1571771894821-ad9b58865c9d?w=800' },
+        { name: 'Apple', img: 'https://images.unsplash.com/photo-1570913149827-d2ac84ab3f9a?w=800' },
+        { name: 'Banana', img: 'https://images.unsplash.com/photo-1543218024-57a70143c369?w=800' },
         { name: 'Mango', img: 'https://images.unsplash.com/photo-1553279768-865429fa0078?w=800' },
         { name: 'Pineapple', img: 'https://images.unsplash.com/photo-1550258987-190a2d41a8ba?w=800' },
-        { name: 'Orange', img: 'https://images.unsplash.com/photo-1549888834-3ec93abae044?w=800' },
+        { name: 'Orange', img: 'https://images.unsplash.com/photo-1547514701-42782101795e?w=800' },
         { name: 'Grapes', img: 'https://images.unsplash.com/photo-1537640538966-79f369b41e8f?w=800' },
         { name: 'Strawberry', img: 'https://images.unsplash.com/photo-1464965911861-746a04b4bca6?w=800' },
         { name: 'Papaya', img: 'https://images.unsplash.com/photo-1517282001574-fba0b571eb30?w=800' },
