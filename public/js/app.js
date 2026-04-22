@@ -265,7 +265,15 @@ const app = {
 
     toggleChat() {
         const chat = document.getElementById('chatbot-window');
-        chat.style.display = (chat.style.display === 'none') ? 'flex' : 'none';
+        if (!chat) return;
+        const isHidden = chat.style.display === 'none';
+        chat.style.display = isHidden ? 'flex' : 'none';
+        
+        // Add welcome message if empty
+        const messages = document.getElementById('chat-messages');
+        if (isHidden && messages && messages.children.length === 0) {
+            this.appendMessage('bot', "Welcome to Organic Farming Hub! I'm AgriBot, your personal farming assistant. How can I help you grow today?");
+        }
     },
 
     async sendChat() {
@@ -286,37 +294,44 @@ const app = {
         container.appendChild(div);
         container.scrollTop = container.scrollHeight;
 
-        // Simulate AI thinking
+        // Expanded Knowledge Base
+        const KB = {
+            'soil': "Soil health is the foundation. Use <b>crop rotation</b> and <b>green manures</b>. If your soil is acidic, add lime; if alkaline, add organic sulfur or peat moss.",
+            'pest': "For pests, use <b>Integrated Pest Management (IPM)</b>. Neem oil spray, yellow sticky traps, and introducing ladybugs are excellent chemical-free solutions.",
+            'fertilizer': "The best organic fertilizers are <b>Vermicompost</b>, <b>Seaweed extract</b>, and <b>Fish emulsion</b>. You can also make Jeevamrutha using cow dung and jaggery.",
+            'weed': "Manage weeds by <b>mulching</b> heavily with straw or wood chips. You can also use flame weeders or organic vinegar-based sprays for paths.",
+            'water': "Conserve water with <b>drip irrigation</b>. Watering early in the morning reduces evaporation and prevents fungal diseases on leaves.",
+            'seed': "Always use <b>heirloom or non-GMO organic seeds</b>. They are better adapted to local conditions and you can save them for next season.",
+            'compost': "A good compost pile needs a <b>C:N ratio of 30:1</b>. Mix 'browns' (dried leaves, cardboard) with 'greens' (food scraps, fresh grass).",
+            'tomato': "Tomatoes need <b>calcium</b> to prevent blossom end rot. Add crushed eggshells to the soil and ensure consistent watering.",
+            'disease': "For fungal diseases like powdery mildew, use a spray of <b>1 part milk to 9 parts water</b>. It changes the leaf pH and kills fungi.",
+            'certification': "To get certified organic, you usually need to avoid synthetic chemicals for <b>3 years</b>. Contact your local organic certifying body for an audit.",
+            'hello': "Hello! I am AgriBot, your expert guide to organic farming. Ask me about soil, pests, fertilizers, or specific crops!",
+            'help': "I can help with: \n1. Soil preparation\n2. Pest control\n3. Organic fertilizers\n4. Crop-specific advice\n5. Certification guidance"
+        };
+
         setTimeout(() => {
             document.getElementById(typingId).remove();
-            let reply = "That's a great question about organic farming! Could you please be more specific so I can help you better?";
+            let reply = "I'm not quite sure about that specific detail. However, in organic farming, the general rule is to focus on <b>preventative care</b> and <b>biological diversity</b>. Could you try asking about soil, pests, or fertilizers?";
+            
             const text = msg.toLowerCase();
-
-            if (text.includes('hello') || text.includes('hi')) {
-                reply = "Hello! I'm AgriBot. How can I help you with organic farming today?";
-            } else if (text.includes('soil')) {
-                reply = "Soil health is key! We recommend crop rotation and using vermicompost to keep your soil rich in nutrients.";
-            } else if (text.includes('pest') || text.includes('insect')) {
-                reply = "For organic pest control, try Neem oil or companion planting with marigolds. They work wonders without chemicals!";
-            } else if (text.includes('price') || text.includes('cost')) {
-                reply = "Our organic products are priced competitively to support local farmers. You can find all prices in the Market section.";
-            } else if (text.includes('buy') || text.includes('market')) {
-                reply = "You can browse and buy fresh organic produce in our Marketplace! Just click 'Market' in the menu.";
-            } else if (text.includes('farmer') || text.includes('sell')) {
-                reply = "Are you a farmer? You can register in the 'Farmer Portal' to start selling your organic products here!";
-            } else if (text.includes('water') || text.includes('irrigation')) {
-                reply = "Sustainable water use is vital. Drip irrigation and mulching are the best ways to conserve water in organic farms.";
+            for (const key in KB) {
+                if (text.includes(key)) {
+                    reply = KB[key];
+                    break;
+                }
             }
 
             this.appendMessage('bot', reply);
-        }, 1000);
+        }, 1200);
     },
 
     appendMessage(sender, text) {
         const container = document.getElementById('chat-messages');
+        if (!container) return;
         const div = document.createElement('div');
         div.className = `msg ${sender}`;
-        div.innerText = text;
+        div.innerHTML = text; // Enable HTML for bold tags and breaks
         container.appendChild(div);
         container.scrollTop = container.scrollHeight;
     }
