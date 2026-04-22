@@ -37,6 +37,12 @@ const app = {
     renderProducts(products) {
         const container = document.getElementById('category-groups');
         container.innerHTML = '';
+        const fallback = 'https://images.unsplash.com/photo-1610348725531-843dff563e2c?w=600';
+
+        if (products.length === 0) {
+            container.innerHTML = '<div style="text-align:center; padding:5rem; color:var(--text-dim);">No products found. Try a different search.</div>';
+            return;
+        }
 
         const groups = products.reduce((acc, p) => {
             if (!acc[p.category]) acc[p.category] = [];
@@ -57,7 +63,10 @@ const app = {
                     ${groups[cat].map(p => `
                         <div class="product-card reveal">
                             <span class="organic-badge">Organic</span>
-                            <img src="${p.imageUrl}" class="product-img" alt="${p.name}">
+                            <img src="${p.imageUrl}" 
+                                 class="product-img" 
+                                 alt="${p.name}"
+                                 onerror="this.src='${fallback}'; this.onerror=null;">
                             <div class="product-info">
                                 <h3>${p.name}</h3>
                                 <div class="product-footer">
@@ -71,7 +80,9 @@ const app = {
             `;
             container.insertAdjacentHTML('beforeend', groupHtml);
         });
-        this.revealOnScroll();
+
+        // Trigger reveal after a tiny delay for DOM to settle
+        setTimeout(() => this.revealOnScroll(), 100);
     },
 
     addToCart(id, name, price) {
