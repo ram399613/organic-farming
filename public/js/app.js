@@ -149,7 +149,7 @@ const app = {
             html += grouped[cat].map(p => `
                 <div class="glass-card reveal">
                     <div class="img-box" onclick="app.viewProduct('${p._id}')">
-                        <img src="${p.imageUrl}" alt="${p.name}" onerror="this.src='https://images.unsplash.com/photo-1542838132-92c53300491e?w=600'">
+                        <img src="${p.imageUrl}" alt="${p.name}" onerror="this.src='https://images.unsplash.com/photo-1610348725531-843dff563e2c?w=600'">
                     </div>
                     <div class="card-content">
                         <small style="color:var(--primary); font-weight:700; text-transform:uppercase; font-size:0.65rem;">${p.category}</small>

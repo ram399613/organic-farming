@@ -50,8 +50,14 @@ main { padding-top: 0; }
 .glass-card { 
     background: var(--card-bg); border: 1px solid rgba(255,255,255,0.05); border-radius: var(--radius-lg); overflow: hidden;
     transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    perspective: 1000px;
 }
-.glass-card:hover { transform: translateY(-5px); border-color: var(--primary); background: rgba(30, 41, 59, 0.6); }
+.glass-card:hover { 
+    transform: translateY(-8px) rotateX(2deg) rotateY(1deg); 
+    border-color: var(--primary); 
+    background: rgba(30, 41, 59, 0.6);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4), 0 0 20px rgba(16, 185, 129, 0.1);
+}
 
 /* Compact Sections */
 .section-header { text-align: center; margin: 3rem 0 1.5rem; }
