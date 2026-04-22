@@ -29,10 +29,16 @@ const app = {
             if(viewId === 'products') await this.fetchProducts();
             if(viewId === 'cart') this.renderCart();
             if(viewId === 'dashboard') {
-                if(!this.token) return this.navigate('login');
+                if(!this.token) {
+                    this.showLoading(false);
+                    return this.navigate('login');
+                }
                 await this.loadDashboard();
             }
-        } catch (err) { console.error(err); }
+        } catch (err) { 
+            console.error(err); 
+            this.showLoading(false);
+        }
 
         target.classList.add('active');
         setTimeout(() => {
@@ -104,11 +110,19 @@ const app = {
 
     // MARKET
     async fetchProducts() {
-        const search = document.getElementById('searchBar').value;
-        const category = document.getElementById('categoryFilter').value;
-        let url = `${API_URL}/products?search=${search}&category=${category}`;
-        const res = await fetch(url);
-        this.renderProducts(await res.json());
+        try {
+            const search = document.getElementById('searchBar').value;
+            const category = document.getElementById('categoryFilter').value;
+            let url = `${API_URL}/products?search=${search}&category=${category}`;
+            const res = await fetch(url);
+            if(!res.ok) throw new Error('Failed to fetch products');
+            this.renderProducts(await res.json());
+        } catch (err) {
+            console.error(err);
+            this.showToast('Error loading products. Please try again.');
+        } finally {
+            this.showLoading(false);
+        }
     },
 
     renderProducts(products) {
@@ -213,21 +227,29 @@ const app = {
 
     // DASHBOARD
     async loadDashboard() {
-        const res = await fetch(`${API_URL}/orders`, { headers: { 'Authorization': `Bearer ${this.token}` } });
-        const orders = await res.json();
-        document.getElementById('stat-value-1').innerText = orders.length;
-        document.getElementById('stat-value-2').innerText = '₹' + orders.reduce((s, o) => s + (o.totalAmount || 0), 0);
-        document.getElementById('orders-list').innerHTML = orders.length === 0 ? 
-            '<p style="text-align:center; padding:2rem; color:var(--text-dim);">No orders found.</p>' :
-            orders.map(o => `
-            <div class="glass-card" style="padding:1.4rem; margin-bottom:1rem; display:flex; justify-content:space-between; align-items:center; border-left: 4px solid var(--primary);">
-                <div>
-                    <h4 style="color:var(--primary); font-size:0.9rem;">#${o._id.substring(o._id.length-6).toUpperCase()}</h4>
-                    <small style="color:var(--text-dim)">Confirmed ${new Date(o.createdAt).toLocaleDateString()}</small>
+        try {
+            const res = await fetch(`${API_URL}/orders`, { headers: { 'Authorization': `Bearer ${this.token}` } });
+            if(!res.ok) throw new Error('Failed to load dashboard');
+            const orders = await res.json();
+            document.getElementById('stat-value-1').innerText = orders.length;
+            document.getElementById('stat-value-2').innerText = '₹' + orders.reduce((s, o) => s + (o.totalAmount || 0), 0);
+            document.getElementById('orders-list').innerHTML = orders.length === 0 ? 
+                '<p style="text-align:center; padding:2rem; color:var(--text-dim);">No orders found.</p>' :
+                orders.map(o => `
+                <div class="glass-card" style="padding:1.4rem; margin-bottom:1rem; display:flex; justify-content:space-between; align-items:center; border-left: 4px solid var(--primary);">
+                    <div>
+                        <h4 style="color:var(--primary); font-size:0.9rem;">#${o._id.substring(o._id.length-6).toUpperCase()}</h4>
+                        <small style="color:var(--text-dim)">Confirmed ${new Date(o.createdAt).toLocaleDateString()}</small>
+                    </div>
+                    <strong style="font-size:1.1rem;">₹${o.totalAmount}</strong>
                 </div>
-                <strong style="font-size:1.1rem;">₹${o.totalAmount}</strong>
-            </div>
-        `).join('');
+            `).join('');
+        } catch (err) {
+            console.error(err);
+            this.showToast('Error loading dashboard.');
+        } finally {
+            this.showLoading(false);
+        }
     },
 
     // AI
