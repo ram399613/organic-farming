@@ -3,216 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Organic Connect | Premium E-Commerce</title>
+    <title>Organic Connect | Premium Marketplace</title>
     <link rel="stylesheet" href="css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div id="loader-overlay"><div class="spinner"></div></div>
+    <div id="loader"><div class="spinner"></div></div>
     <div id="toast-container"></div>
 
     <nav class="glass-nav">
         <div class="nav-container">
-            <h1 class="logo" onclick="app.navigate('home')">Organic Connect</h1>
+            <a href="#" class="logo" onclick="app.navigate('home')">Organic Connect</a>
             <ul class="nav-links">
-                <li><a href="#" onclick="app.navigate('home')">Home</a></li>
-                <li><a href="#" onclick="app.navigate('products')">Market</a></li>
-                <li><a href="#" onclick="app.navigate('explore')">Explore</a></li>
-                <li id="nav-dashboard" style="display:none;"><a href="#" onclick="app.navigate('dashboard')">Profile</a></li>
+                <li><a href="#" id="link-home" onclick="app.navigate('home')">Home</a></li>
+                <li><a href="#" id="link-market" onclick="app.navigate('market')">Market</a></li>
+                <li><a href="#" id="link-explore" onclick="app.navigate('explore')">Explore</a></li>
             </ul>
             <div class="nav-actions">
-                <div id="cart-btn" onclick="app.navigate('cart')" style="cursor:pointer; font-size: 1.25rem; position:relative;">
-                    🛒 <span id="cart-count" style="position:absolute; top:-5px; right:-10px; background:var(--primary); font-size:0.65rem; padding:1px 6px; border-radius:50%; font-weight:800;">0</span>
+                <div class="cart-icon" onclick="app.toggleCart()">
+                    🛒<span id="cart-count" class="cart-count">0</span>
                 </div>
-                <div id="auth-buttons">
-                    <button class="btn-primary" style="padding: 0.5rem 1.2rem; font-size: 0.8rem;" onclick="app.navigate('login')">Sign In</button>
-                </div>
-                <div id="user-menu" style="display:none; align-items:center; gap: 1rem;">
-                    <span id="user-name" style="color:var(--primary); font-weight:800;"></span>
-                    <button class="btn-outline" style="padding: 0.4rem 0.8rem; font-size: 0.75rem;" onclick="app.logout()">Logout</button>
-                </div>
+                <button class="btn-signin" onclick="app.navigate('login')">Sign In</button>
             </div>
         </div>
     </nav>
 
-    <main id="app-content">
-        <!-- HOME -->
-        <section id="view-home" class="view active">
-            <div class="hero">
-                <div class="hero-overlay"></div>
-                <div class="hero-text">
-                    <h1>Real Food. <br>Real Connection.</h1>
-                    <p>Connecting you directly with the best local organic farmers. Freshness you can taste, quality you can trust.</p>
-                    <div class="hero-buttons">
-                        <button class="btn-primary" onclick="app.navigate('products')">Browse Catalog</button>
-                        <button class="btn-outline" onclick="app.navigate('explore')">Our Farming Story</button>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="stats-row" style="margin-top: -60px; position: relative; z-index: 5;">
-                <div class="stat-box glass-card"><h4>Market Fresh</h4><div class="value">Daily</div></div>
-                <div class="stat-box glass-card"><h4>Pesticide Free</h4><div class="value">100%</div></div>
-                <div class="stat-box glass-card"><h4>Local Support</h4><div class="value">Direct</div></div>
+    <main>
+        <!-- SEARCH SECTION -->
+        <section class="search-section">
+            <h1 style="margin-bottom: 2rem; font-size: 2.5rem;">Freshness Delivered.</h1>
+            <div class="search-box">
+                <input type="text" id="searchBar" class="search-input" placeholder="Search fresh produce..." onkeyup="app.fetchProducts()">
+                <select id="categoryFilter" class="category-filter" onchange="app.fetchProducts()">
+                    <option value="All">All Categories</option>
+                    <option value="Fruits">Fruits</option>
+                    <option value="Vegetables">Vegetables</option>
+                    <option value="Dairy">Dairy</option>
+                    <option value="Grains">Grains</option>
+                </select>
             </div>
         </section>
 
-        <!-- EXPLORE (LEARN ABOUT FARMING) -->
-        <section id="view-explore" class="view" style="padding: 100px 1.5rem 4rem; max-width: 1100px; margin: 0 auto;">
-            <div class="section-header">
-                <h2>The Farmer's Academy</h2>
-                <p>A deep dive into regenerative agriculture and organic certification.</p>
-            </div>
-            
-            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; margin-top: 3rem;">
-                
-                <!-- Module 1 -->
-                <div class="glass-card reveal">
-                    <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800" onerror="this.src='https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=800'" style="width:100%; height:250px; object-fit:cover;">
-                    <div style="padding:2rem;">
-                        <span style="color:var(--primary); font-weight:800; font-size:0.7rem;">LEVEL 1: FOUNDATIONS</span>
-                        <h3 style="margin:0.5rem 0 1rem; font-size:1.8rem;">Living Soil</h3>
-                        <p style="color:var(--text-dim); font-size:0.95rem;">Understand the microbiology of your land. We study how fungi, bacteria, and earthworms create a self-sustaining nutrient delivery system without chemical inputs. Healthy soil is the immune system of the planet.</p>
-                    </div>
-                </div>
-
-                <!-- Module 2 -->
-                <div class="glass-card reveal" style="transition-delay: 0.1s;">
-                    <img src="https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?w=800" onerror="this.src='https://images.unsplash.com/photo-1506084868230-bb9d95c24759?w=800'" style="width:100%; height:250px; object-fit:cover;">
-                    <div style="padding:2rem;">
-                        <span style="color:var(--primary); font-weight:800; font-size:0.7rem;">LEVEL 2: STRATEGY</span>
-                        <h3 style="margin:0.5rem 0 1rem; font-size:1.8rem;">Crop Rotation</h3>
-                        <p style="color:var(--text-dim); font-size:0.95rem;">Learning the 'Symphony of Seasons'. By alternating nitrogen-fixing plants like legumes with heavy feeders like corn, we naturally replenish the earth's riches and break pest cycles naturally.</p>
-                    </div>
-                </div>
-
-                <!-- Module 3 -->
-                <div class="glass-card reveal" style="transition-delay: 0.2s;">
-                    <img src="https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=800" onerror="this.src='https://images.unsplash.com/photo-1540420773420-3366772f4999?w=800'" style="width:100%; height:250px; object-fit:cover;">
-                    <div style="padding:2rem;">
-                        <span style="color:var(--primary); font-weight:800; font-size:0.7rem;">LEVEL 3: BIOLOGICALS</span>
-                        <h3 style="margin:0.5rem 0 1rem; font-size:1.8rem;">Natural Defense</h3>
-                        <p style="color:var(--text-dim); font-size:0.95rem;">Study integrated pest management (IPM). Instead of poisons, we use companion planting (like Marigolds with Tomatoes) and beneficial insects like ladybugs and lacewings to protect the harvest.</p>
-                    </div>
-                </div>
-
-                <!-- Module 4 (New) -->
-                <div class="glass-card reveal">
-                    <img src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800" onerror="this.src='https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800'" style="width:100%; height:250px; object-fit:cover;">
-                    <div style="padding:2rem;">
-                        <span style="color:var(--primary); font-weight:800; font-size:0.7rem;">LEVEL 4: REGENERATION</span>
-                        <h3 style="margin:0.5rem 0 1rem; font-size:1.8rem;">Carbon Sequestration</h3>
-                        <p style="color:var(--text-dim); font-size:0.95rem;">Discover how organic no-till farming traps carbon in the ground. Agriculture can be a solution to climate change when we work with nature's carbon cycle.</p>
-                    </div>
-                </div>
-
-                <!-- Module 5 -->
-                <div class="glass-card reveal" style="grid-column: span 2; display:flex; flex-wrap:wrap; align-items:center;">
-                   <div style="padding:3rem; flex:1; min-width:300px;">
-                        <h3 style="font-size:2rem; margin-bottom:1rem;">Water Wisdom & Resilience</h3>
-                        <p style="color:var(--text-dim);">Studying drip irrigation, mulching, and rainwater harvesting to ensure every drop is used efficiently. Sustainable water management is the backbone of organic resiliency during droughts and heatwaves.</p>
-                        <div style="margin-top:1.5rem; display:flex; gap:1rem; flex-wrap:wrap;">
-                            <span style="background:rgba(16, 185, 129, 0.1); padding:0.5rem 1rem; border-radius:30px; font-size:0.8rem; border:1px solid var(--primary);">✓ Zero Runoff</span>
-                            <span style="background:rgba(16, 185, 129, 0.1); padding:0.5rem 1rem; border-radius:30px; font-size:0.8rem; border:1px solid var(--primary);">✓ Filtered Supply</span>
-                        </div>
-                   </div>
-                   <img src="https://images.unsplash.com/photo-1504439268584-b72c5019471e?w=800" onerror="this.src='https://images.unsplash.com/photo-1595841696650-5f12e84c987a?w=800'" style="width:300px; height:300px; object-fit:cover; margin:2rem; border-radius:15px;">
-                </div>
-            </div>
-        </section>
-
-        <!-- MARKET -->
-        <section id="view-products" class="view">
-            <div class="section-header">
-                <h2>Eco Marketplace</h2>
-                <div style="max-width: 800px; margin: 1.5rem auto; display: flex; gap: 0.5rem; padding: 0 1rem;">
-                    <input type="text" id="searchBar" placeholder="Search fresh produce..." onkeyup="app.filterProducts()" style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1); color:white; padding:0.8rem 1.2rem; border-radius:12px; flex:2;">
-                    <select id="categoryFilter" onchange="app.filterProducts()" style="background:var(--card-bg); color:white; border:1px solid rgba(255,255,255,0.1); padding:0.8rem; border-radius:12px; flex:1;">
-                        <option value="">All Categories</option>
-                        <option value="Fruits">Fruits</option>
-                        <option value="Vegetables">Vegetables</option>
-                        <option value="Dairy">Dairy</option>
-                        <option value="Grains">Grains</option>
-                        <option value="Herbs">Herbs</option>
-                    </select>
-                </div>
-            </div>
-            <div class="product-grid" id="product-container"></div>
-        </section>
-
-        <!-- CART -->
-        <section id="view-cart" class="view" style="padding: 100px 1.5rem 2rem;">
-            <div class="glass-card" style="max-width: 700px; margin: 0 auto; padding: 2.5rem;">
-                <h2 style="margin-bottom: 2rem;">My Shopping List</h2>
-                <div id="cart-list" style="display:flex; flex-direction:column; gap:1rem;"></div>
-                <div style="display:flex; justify-content: space-between; align-items: center; margin-top: 2rem; border-top: 1px solid #334155; padding-top: 2rem;">
-                    <div><h3 style="font-size:1.8rem;">Total: ₹<span id="cart-total-price">0</span></h3></div>
-                    <button class="btn-primary" style="padding: 1rem 3rem;" onclick="app.checkout()">Place Order</button>
-                </div>
-            </div>
-        </section>
-
-        <!-- PRODUCT DETAILS -->
-        <section id="view-product-details" class="view" style="padding: 100px 1.5rem 2rem;">
-            <div id="details-content" class="glass-card" style="max-width: 1000px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: 0;"></div>
-        </section>
-
-        <!-- DASHBOARD -->
-        <section id="view-dashboard" class="view" style="padding-top:100px;">
-            <div class="stats-row" id="stats-grid">
-                <div class="stat-box glass-card"><h4>History</h4><div class="value" id="stat-value-1">0</div></div>
-                <div class="stat-box glass-card"><h4>Invested</h4><div class="value" id="stat-value-2">₹0</div></div>
-                <div class="stat-box glass-card"><h4>Vouchers</h4><div class="value" style="color:var(--primary);">₹500</div></div>
-            </div>
-            <div class="product-grid" style="grid-template-columns: 1fr; max-width: 800px;">
-                <div id="orders-list"></div>
-            </div>
-        </section>
-
-        <!-- AUTH LOGIN -->
-        <section id="view-login" class="view" style="display:grid; place-items:center;">
-            <div class="glass-card" style="width: 100%; max-width: 400px; padding: 3rem;">
-                <h2 style="text-align:center; margin-bottom: 2rem;">Welcome Back</h2>
-                <form onsubmit="app.handleLogin(event)" style="display:flex; flex-direction:column; gap:1.2rem;">
-                    <input type="email" id="loginEmail" placeholder="Email" required style="padding:1rem; background:rgba(0,0,0,0.4); border:1px solid #334155; color:white; border-radius:10px;">
-                    <input type="password" id="loginPassword" placeholder="Password" required style="padding:1rem; background:rgba(0,0,0,0.4); border:1px solid #334155; color:white; border-radius:10px;">
-                    <button type="submit" class="btn-primary">Sign In</button>
-                    <p style="text-align:center; font-size:0.85rem; color:var(--text-dim);">New member? <a href="#" onclick="app.navigate('register')" style="color:var(--primary); text-decoration:none;">Join us</a></p>
-                </form>
-            </div>
-        </section>
-
-        <!-- AUTH REGISTER -->
-        <section id="view-register" class="view" style="display:grid; place-items:center;">
-            <div class="glass-card" style="width: 100%; max-width: 400px; padding: 3rem;">
-                <h2 style="text-align:center; margin-bottom: 2rem;">Join the Community</h2>
-                <form onsubmit="app.handleRegister(event)" style="display:flex; flex-direction:column; gap:1.2rem;">
-                    <input type="text" id="regName" placeholder="Full Name" required style="padding:1rem; background:rgba(0,0,0,0.4); border:1px solid #334155; color:white; border-radius:10px;">
-                    <input type="email" id="regEmail" placeholder="Email" required style="padding:1rem; background:rgba(0,0,0,0.4); border:1px solid #334155; color:white; border-radius:10px;">
-                    <input type="password" id="regPassword" placeholder="Password" required style="padding:1rem; background:rgba(0,0,0,0.4); border:1px solid #334155; color:white; border-radius:10px;">
-                    <select id="regRole" style="padding:1rem; background:rgba(0,0,0,0.4); border:1px solid #334155; color:white; border-radius:10px;">
-                        <option value="user">Customer</option>
-                        <option value="farmer">Farmer / Specialist</option>
-                    </select>
-                    <button type="submit" class="btn-primary">Create Account</button>
-                    <p style="text-align:center; font-size:0.85rem; color:var(--text-dim);">Already part of us? <a href="#" onclick="app.navigate('login')" style="color:var(--primary); text-decoration:none;">Sign In</a></p>
-                </form>
-            </div>
-        </section>
+        <!-- MARKET SECTION -->
+        <div id="market-content">
+            <div id="category-groups"></div>
+        </div>
     </main>
-
-    <div id="ai-chat-fab" onclick="app.toggleChat()">🍃</div>
-    <div id="ai-chat-window">
-        <div style="background:var(--primary); padding:1rem; display:flex; justify-content:space-between; align-items:center;">
-            <strong style="font-size:0.9rem;">Expert Organic AI</strong>
-            <button onclick="app.toggleChat()" style="background:none; border:none; color:white; cursor:pointer; font-size:1.5rem;">×</button>
-        </div>
-        <div id="chat-messages" style="flex:1; padding:1.2rem; overflow-y:auto; display:flex; flex-direction:column; gap:0.8rem; font-size:0.85rem; background:rgba(0,0,0,0.2);"></div>
-        <div style="padding:1rem; display:flex; gap:0.5rem; background:rgba(2,6,23,0.8); border-top:1px solid rgba(255,255,255,0.1);">
-            <input type="text" id="chatInput" placeholder="Ask about crop rotation..." style="flex:1; padding:0.6rem; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:#000; color:white;">
-            <button class="btn-primary" style="padding:0.6rem 1rem; font-size:0.8rem;" onclick="app.sendMessage()">Send</button>
-        </div>
-    </div>
 
     <script src="js/app.js"></script>
 </body>
