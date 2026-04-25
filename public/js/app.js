@@ -81,7 +81,6 @@ const app = {
             const res = await fetch(`${API_URL}/products?search=${search}&category=${category}&location=${location}`);
             if (!res.ok) throw new Error('Network response was not ok');
             const products = await res.json();
-            console.log(`📦 Fetched ${products.length} products for category: ${category}`);
             this.renderProducts(products);
             if (this.currentView === 'home') this.renderFeatured(products);
         } catch (err) {
