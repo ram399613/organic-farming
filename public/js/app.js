@@ -112,7 +112,7 @@ const app = {
 
         Object.keys(groups).forEach(cat => {
             const groupHtml = `
-                <div class="category-header reveal">
+                <div class="category-header">
                     <h2 class="category-title">${cat}</h2>
                     <div class="title-underline"></div>
                 </div>
@@ -134,7 +134,7 @@ const app = {
     createProductCard(p) {
         const isLive = Math.random() > 0.7; // Mock real-time live status
         return `
-            <div class="product-card reveal">
+            <div class="product-card">
                 <div class="card-badges">
                     <span class="organic-badge">Organic</span>
                     ${isLive ? '<span class="live-badge">● Live</span>' : ''}
