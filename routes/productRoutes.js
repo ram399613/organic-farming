@@ -6,8 +6,8 @@ const { protect, authorize } = require('../middleware/auth');
 // Get all products + filtering
 router.get('/', async (req, res) => {
   try {
-    const { category, search } = req.query;
-    const products = await localStore.getAllProducts({ category, search });
+    const { category, search, location } = req.query;
+    const products = await localStore.getAllProducts({ category, search, location });
     res.json(products);
   } catch (error) {
     res.status(500).json({ message: error.message });
