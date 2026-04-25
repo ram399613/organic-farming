@@ -41,7 +41,14 @@ const app = {
         const btn = document.getElementById('auth-btn');
         if (this.user) {
             btn.innerText = `Hi, ${this.user.name.split(' ')[0]}`;
-            btn.onclick = () => this.handleLogout();
+            btn.onclick = () => {
+                if (confirm("Do you want to sign out?")) this.handleLogout();
+            };
+            
+            // Auto-redirect if on login page
+            if (this.currentView === 'login') {
+                this.navigate(this.user.role === 'farmer' ? 'farmer' : 'home');
+            }
         } else {
             btn.innerText = 'Sign In';
             btn.onclick = () => this.navigate('login');
@@ -60,11 +67,13 @@ const app = {
     async fetchProducts() {
         const sb = document.getElementById('searchBar');
         const cf = document.getElementById('categoryFilter');
+        const lf = document.getElementById('locationFilter');
         const search = sb ? sb.value : '';
         const category = cf ? cf.value : 'All';
+        const location = lf ? lf.value : 'All';
         
         try {
-            const res = await fetch(`${API_URL}/products?search=${search}&category=${category}`);
+            const res = await fetch(`${API_URL}/products?search=${search}&category=${category}&location=${location}`);
             const products = await res.json();
             this.renderProducts(products);
             if (this.currentView === 'home') this.renderFeatured(products);
@@ -106,16 +115,22 @@ const app = {
     },
 
     createProductCard(p) {
+        const isLive = Math.random() > 0.7; // Mock real-time live status
         return `
             <div class="product-card reveal">
-                <span class="organic-badge">Organic</span>
+                <div class="card-badges">
+                    <span class="organic-badge">Organic</span>
+                    ${isLive ? '<span class="live-badge">● Live</span>' : ''}
+                </div>
                 <img src="${p.imageUrl}" class="product-img" alt="${p.name}" onerror="this.src='https://images.unsplash.com/photo-1610348725531-843dff563e2c?w=500'">
                 <div class="product-info">
                     <h3>${p.name}</h3>
-                    <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 0.5rem;">📍 ${p.location || 'Organic Farm, India'}</p>
+                    <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 0.8rem;">
+                        <span style="color: var(--primary);">📍</span> ${p.farmerLocation || 'Organic Farm, India'}
+                    </p>
                     <div class="product-footer">
                         <span class="price">₹${p.price}</span>
-                        <button class="add-btn" onclick="app.addToCart('${p._id}', '${p.name}', ${p.price})">+</button>
+                        <button class="add-btn" onclick="app.addToCart('${p._id}', '${p.name}', ${p.price}, '${p.imageUrl}')">+</button>
                     </div>
                 </div>
             </div>
@@ -123,8 +138,12 @@ const app = {
     },
 
     navigate(view) {
+        if (view === 'login' && this.user) {
+            return this.navigate(this.user.role === 'farmer' ? 'farmer' : 'home');
+        }
+
         this.currentView = view;
-        const views = ['home', 'market', 'education', 'farmer', 'admin'];
+        const views = ['home', 'market', 'education', 'contact', 'shipping', 'privacy', 'blog', 'farmer', 'admin'];
         
         views.forEach(v => {
             const el = document.getElementById(`${v}-view`);
@@ -133,10 +152,49 @@ const app = {
             if (link) link.classList.toggle('active', v === view);
         });
 
+        if (view === 'market') this.fetchProducts();
+
+        if (view === 'admin' && this.user && this.user.role === 'admin') {
+            this.fetchAdminData();
+        }
+
+        if (view === 'farmer') {
+            if (!this.user) {
+                this.openLogin();
+                this.showToast("Please sign in to access the Farmer Portal");
+                this.navigate('home');
+                return;
+            }
+            if (this.user.role !== 'farmer') {
+                this.showToast("Farmer Portal is reserved for our certified partners.");
+                this.navigate('home');
+                return;
+            }
+            document.getElementById('farmer-dashboard').style.display = this.user.isApproved ? 'block' : 'none';
+            document.getElementById('farmer-onboarding').style.display = this.user.isApproved ? 'none' : 'block';
+        }
+
         if (view === 'login') this.openLogin();
         
         window.scrollTo({ top: 0, behavior: 'smooth' });
         setTimeout(() => this.revealOnScroll(), 100);
+    },
+
+    handleContact(e) {
+        e.preventDefault();
+        this.showToast("Message sent! Our farmers will grow back to you soon. 🌱");
+        e.target.reset();
+    },
+
+    navigateAndFilter(view, category = 'All') {
+        this.navigate(view);
+        if (view === 'market') {
+            const cf = document.getElementById('categoryFilter');
+            if (cf) {
+                cf.value = category;
+                this.fetchProducts();
+            }
+        }
     },
 
     openLogin() {
@@ -149,17 +207,29 @@ const app = {
 
     toggleAuthMode() {
         this.authMode = (this.authMode === 'login') ? 'signup' : 'login';
-        document.getElementById('auth-title').innerText = (this.authMode === 'login') ? 'Sign In' : 'Create Account';
+        document.getElementById('auth-title').innerText = (this.authMode === 'login') ? 'Welcome Back' : 'Join the Hub';
+        document.getElementById('auth-toggle-text').innerText = (this.authMode === 'login') ? "Don't have an account?" : "Already have an account?";
         document.getElementById('role-select').style.display = (this.authMode === 'signup') ? 'block' : 'none';
+        document.getElementById('confirm-pass-group').style.display = (this.authMode === 'signup') ? 'block' : 'none';
+        document.getElementById('auth-submit-btn').innerText = (this.authMode === 'login') ? 'Sign In' : 'Create Account';
     },
 
     async handleAuth(e) {
         e.preventDefault();
         const email = document.getElementById('auth-email').value;
         const pass = document.getElementById('auth-pass').value;
+        const confirmPass = document.getElementById('auth-confirm-pass').value;
         const role = document.getElementById('auth-role').value;
+        const btn = document.getElementById('auth-submit-btn');
+
+        if (this.authMode === 'signup' && pass !== confirmPass) {
+            return this.showToast("Passwords do not match");
+        }
 
         try {
+            btn.disabled = true;
+            btn.innerText = (this.authMode === 'login') ? 'Authenticating...' : 'Creating Account...';
+            
             const endpoint = (this.authMode === 'login') ? '/api/auth/login' : '/api/auth/register';
             const body = (this.authMode === 'login') ? { email, password: pass } : { email, password: pass, name: email.split('@')[0], role };
             
@@ -176,14 +246,25 @@ const app = {
                 localStorage.setItem('user', JSON.stringify(data.user));
                 this.updateAuthUI();
                 this.closeLogin();
-                this.showToast(`Welcome back, ${this.user.name}!`);
+                this.showToast(`Welcome to the hub, ${this.user.name}! 🌱`);
                 if (this.user.role === 'farmer') this.navigate('farmer');
                 if (this.user.role === 'admin') this.navigate('admin');
             } else {
-                this.showToast(data.message || "Auth failed");
+                // If user doesn't exist during login, help them register
+                if (this.authMode === 'login' && data.message.toLowerCase().includes('credential')) {
+                    this.showToast("Account not found. Let's create one for you!");
+                    this.toggleAuthMode();
+                    // Pre-fill fields if possible (confirm pass is same as pass for ease)
+                    document.getElementById('auth-confirm-pass').value = pass;
+                } else {
+                    this.showToast(data.message || "Auth failed");
+                }
             }
         } catch (err) {
-            this.showToast("Connection error");
+            this.showToast("Connection error. Is the server running?");
+        } finally {
+            btn.disabled = false;
+            btn.innerText = (this.authMode === 'login') ? 'Sign In' : 'Create Account';
         }
     },
 
@@ -193,65 +274,100 @@ const app = {
         setTimeout(() => this.navigate('home'), 1500);
     },
 
-    addToCart(id, name, price) {
+    addToCart(id, name, price, img) {
         const existing = this.cart.find(item => item.id === id);
         if (existing) {
             existing.qty++;
         } else {
-            this.cart.push({ id, name, price, qty: 1 });
+            this.cart.push({ id, name, price, img, qty: 1 });
         }
-        this.updateCartCount();
+        this.updateCartUI();
+        this.showToast(`Harvested ${name} into your basket! 🧺`);
+    },
+
+    updateCartUI() {
+        const count = document.getElementById('cart-count');
+        if (count) count.innerText = this.cart.reduce((acc, item) => acc + item.qty, 0);
         this.renderCart();
-        this.showToast(`Added ${name} to basket`);
     },
 
     renderCart() {
         const container = document.getElementById('cart-items');
         const totalEl = document.getElementById('total-amount');
         if (!container) return;
+
+        if (this.cart.length === 0) {
+            container.innerHTML = `
+                <div class="empty-cart-state">
+                    <div class="icon">🛒</div>
+                    <p>Your harvest basket is empty.</p>
+                </div>
+            `;
+            totalEl.innerText = '0';
+            return;
+        }
+
         container.innerHTML = this.cart.map((item, idx) => `
             <div class="cart-item">
-                <div class="item-info"><h4>${item.name}</h4><p>₹${item.price} x ${item.qty}</p></div>
-                <button class="remove-btn" onclick="app.removeFromCart(${idx})">🗑️</button>
+                <img src="${item.img}" class="cart-item-img" alt="${item.name}">
+                <div class="cart-item-info">
+                    <h4>${item.name}</h4>
+                    <p>₹${item.price}</p>
+                    <div class="qty-controls">
+                        <button class="qty-btn" onclick="app.updateQty('${item.id}', -1)">-</button>
+                        <span>${item.qty}</span>
+                        <button class="qty-btn" onclick="app.updateQty('${item.id}', 1)">+</button>
+                    </div>
+                </div>
+                <button class="remove-btn-small" onclick="app.updateQty('${item.id}', -${item.qty})">🗑️</button>
             </div>
         `).join('');
-        const total = this.cart.reduce((acc, item) => acc + (item.price * item.qty), 0);
-        totalEl.innerText = total;
+        totalEl.innerText = this.calculateTotal();
     },
 
-    removeFromCart(idx) {
-        this.cart.splice(idx, 1);
-        this.updateCartCount();
-        this.renderCart();
-    },
-
-    updateCartCount() {
-        const count = document.getElementById('cart-count');
-        if (count) count.innerText = this.cart.reduce((acc, item) => acc + item.qty, 0);
+    updateQty(id, delta) {
+        const item = this.cart.find(i => i.id === id);
+        if (item) {
+            item.qty += delta;
+            if (item.qty <= 0) {
+                this.cart = this.cart.filter(i => i.id !== id);
+            }
+            this.updateCartUI();
+        }
     },
 
     toggleCart() {
         const sidebar = document.getElementById('cart-sidebar');
-        sidebar.style.display = (sidebar.style.display === 'none') ? 'flex' : 'none';
-        if (sidebar.style.display === 'flex') this.renderCart();
+        if (!sidebar) return;
+        const isHidden = sidebar.style.display === 'none' || !sidebar.style.display;
+        sidebar.style.display = isHidden ? 'flex' : 'none';
+        if (isHidden) this.renderCart();
     },
 
-    checkout() {
-        if (this.cart.length === 0) return this.showToast("Basket is empty");
-        this.showToast("Order placed successfully! Connecting with farmers...");
-        this.cart = [];
-        this.updateCartCount();
-        this.toggleCart();
-    },
-
-    showToast(msg) {
+    showToast(msg, type = 'info') {
         const container = document.getElementById('toast-container');
+        if (!container) return;
         const toast = document.createElement('div');
-        toast.className = 'toast';
-        toast.style.cssText = `background:#1e293b; color:white; padding:1rem 2rem; border-radius:12px; margin-top:1rem; border-left:4px solid var(--primary); box-shadow:0 10px 20px rgba(0,0,0,0.3); animation:slideIn 0.3s ease-out;`;
+        toast.className = `toast reveal active`;
+        toast.style.cssText = `
+            background: rgba(30, 41, 59, 0.9);
+            backdrop-filter: blur(10px);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: var(--radius-lg);
+            margin-top: 1rem;
+            border: 1px solid var(--glass-border);
+            border-left: 4px solid var(--primary);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            font-weight: 600;
+        `;
         toast.innerText = msg;
         container.appendChild(toast);
-        setTimeout(() => toast.remove(), 3000);
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            toast.style.transform = 'translateY(-20px)';
+            setTimeout(() => toast.remove(), 400);
+        }, 3000);
     },
 
     revealOnScroll() {
@@ -276,54 +392,146 @@ const app = {
         }
     },
 
+    chatHistory: [],
+
     async sendChat() {
         const input = document.getElementById('chatInput');
         const msg = input.value.trim();
         if (!msg) return;
 
         this.appendMessage('user', msg);
+        this.chatHistory.push({ role: 'user', content: msg });
         input.value = '';
 
-        // Show "typing" indicator
-        const typingId = 'bot-typing-' + Date.now();
+        const messagesContainer = document.getElementById('chat-messages');
+        const typingDiv = document.createElement('div');
+        typingDiv.className = 'msg bot typing-container';
+        typingDiv.innerHTML = '<span class="dot"></span><span class="dot"></span><span class="dot"></span>';
+        messagesContainer.appendChild(typingDiv);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+        const statusEl = document.getElementById('chat-status');
+        if (statusEl) statusEl.style.opacity = '1';
+
+        try {
+            const res = await fetch(`${API_URL}/ai/chat`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: msg, history: this.chatHistory })
+            });
+            const data = await res.json();
+            
+            if (statusEl) statusEl.style.opacity = '0';
+            typingDiv.remove();
+            if (res.ok) {
+                this.chatHistory.push({ role: 'assistant', content: data.reply });
+                await this.typeEffect(data.reply);
+            } else {
+                this.appendMessage('bot', "I'm having a bit of trouble connecting to the network. Let's try again? 🌿");
+            }
+        } catch (err) {
+            typingDiv.remove();
+            this.appendMessage('bot', "Our digital farm seems to be offline. Please check your connection! 🚜");
+        }
+    },
+
+    async typeEffect(text) {
         const container = document.getElementById('chat-messages');
         const div = document.createElement('div');
-        div.className = 'msg bot typing';
-        div.id = typingId;
-        div.innerText = "...";
+        div.className = 'msg bot';
         container.appendChild(div);
-        container.scrollTop = container.scrollHeight;
+        
+        const words = text.split(' ');
+        let currentText = '';
+        
+        for (let i = 0; i < words.length; i++) {
+            currentText += words[i] + ' ';
+            div.innerHTML = currentText + '<span class="typing-cursor">|</span>';
+            container.scrollTop = container.scrollHeight;
+            await new Promise(r => setTimeout(r, 40 + Math.random() * 40));
+        }
+        div.innerHTML = text; // Final clean text without cursor
+    },
 
-        // Expanded Knowledge Base
-        const KB = {
-            'soil': "Soil health is the foundation. Use <b>crop rotation</b> and <b>green manures</b>. If your soil is acidic, add lime; if alkaline, add organic sulfur or peat moss.",
-            'pest': "For pests, use <b>Integrated Pest Management (IPM)</b>. Neem oil spray, yellow sticky traps, and introducing ladybugs are excellent chemical-free solutions.",
-            'fertilizer': "The best organic fertilizers are <b>Vermicompost</b>, <b>Seaweed extract</b>, and <b>Fish emulsion</b>. You can also make Jeevamrutha using cow dung and jaggery.",
-            'weed': "Manage weeds by <b>mulching</b> heavily with straw or wood chips. You can also use flame weeders or organic vinegar-based sprays for paths.",
-            'water': "Conserve water with <b>drip irrigation</b>. Watering early in the morning reduces evaporation and prevents fungal diseases on leaves.",
-            'seed': "Always use <b>heirloom or non-GMO organic seeds</b>. They are better adapted to local conditions and you can save them for next season.",
-            'compost': "A good compost pile needs a <b>C:N ratio of 30:1</b>. Mix 'browns' (dried leaves, cardboard) with 'greens' (food scraps, fresh grass).",
-            'tomato': "Tomatoes need <b>calcium</b> to prevent blossom end rot. Add crushed eggshells to the soil and ensure consistent watering.",
-            'disease': "For fungal diseases like powdery mildew, use a spray of <b>1 part milk to 9 parts water</b>. It changes the leaf pH and kills fungi.",
-            'certification': "To get certified organic, you usually need to avoid synthetic chemicals for <b>3 years</b>. Contact your local organic certifying body for an audit.",
-            'hello': "Hello! I am AgriBot, your expert guide to organic farming. Ask me about soil, pests, fertilizers, or specific crops!",
-            'help': "I can help with: \n1. Soil preparation\n2. Pest control\n3. Organic fertilizers\n4. Crop-specific advice\n5. Certification guidance"
-        };
+    async checkout() {
+        if (!this.user) return this.navigate('login');
+        if (this.cart.length === 0) return this.showToast("Your basket is empty!");
 
-        setTimeout(() => {
-            document.getElementById(typingId).remove();
-            let reply = "I'm not quite sure about that specific detail. However, in organic farming, the general rule is to focus on <b>preventative care</b> and <b>biological diversity</b>. Could you try asking about soil, pests, or fertilizers?";
-            
-            const text = msg.toLowerCase();
-            for (const key in KB) {
-                if (text.includes(key)) {
-                    reply = KB[key];
-                    break;
-                }
+        try {
+            const res = await fetch(`${API_URL}/orders`, {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
+                body: JSON.stringify({ items: this.cart, total: this.calculateTotal() })
+            });
+
+            if (res.ok) {
+                this.cart = [];
+                this.updateCartUI();
+                this.toggleCart();
+                this.showToast("Order placed successfully! Harvesting your items now... 🚜");
+                
+                const overlay = document.createElement('div');
+                overlay.className = 'modal reveal active';
+                overlay.style.zIndex = '6000';
+                overlay.innerHTML = `
+                    <div class="modal-content auth-card" style="text-align: center; border-color: var(--primary);">
+                        <div style="font-size: 4rem; margin-bottom: 1rem;">✅</div>
+                        <h2>Harvest Confirmed!</h2>
+                        <p style="color: var(--text-dim); margin-top: 1rem;">Your organic order has been received. Our farmers are already picking the freshest items for you.</p>
+                        <button class="btn-primary" style="margin-top: 2rem; width: 100%;" onclick="this.parentElement.parentElement.remove()">Continue Shopping</button>
+                    </div>
+                `;
+                document.body.appendChild(overlay);
             }
+        } catch (err) { this.showToast("Failed to place order"); }
+    },
 
-            this.appendMessage('bot', reply);
-        }, 1200);
+    async fetchAdminData() {
+        try {
+            const res = await fetch(`${API_URL}/admin/dashboard`, {
+                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+            });
+            const data = await res.json();
+            
+            document.getElementById('admin-total-users').innerText = data.totalUsers;
+            document.getElementById('admin-total-farmers').innerText = data.totalFarmers;
+            
+            const list = document.getElementById('approval-list');
+            if (list) {
+                list.innerHTML = data.pendingFarmers.length ? '' : '<p style="color: var(--text-dim);">No pending approvals at the moment.</p>';
+                data.pendingFarmers.forEach(f => {
+                    const div = document.createElement('div');
+                    div.className = 'auth-card';
+                    div.style.marginBottom = '1rem';
+                    div.innerHTML = `
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <strong>${f.name}</strong><br>
+                                <small>${f.location} | ${f.email}</small>
+                            </div>
+                            <button class="btn-primary" style="padding: 0.4rem 1rem; font-size: 0.8rem;" onclick="app.approveFarmer('${f._id}')">Approve</button>
+                        </div>
+                    `;
+                    list.appendChild(div);
+                });
+            }
+        } catch (err) { console.error(err); }
+    },
+
+    async approveFarmer(id) {
+        try {
+            const res = await fetch(`${API_URL}/admin/approve-farmer/${id}`, {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+            });
+            if (res.ok) {
+                this.showToast("Farmer approved and verified! 🚜");
+                this.fetchAdminData();
+            }
+        } catch (err) { this.showToast("Approval failed"); }
     },
 
     appendMessage(sender, text) {
@@ -331,9 +539,13 @@ const app = {
         if (!container) return;
         const div = document.createElement('div');
         div.className = `msg ${sender}`;
-        div.innerHTML = text; // Enable HTML for bold tags and breaks
+        div.innerHTML = text;
         container.appendChild(div);
         container.scrollTop = container.scrollHeight;
+    },
+
+    calculateTotal() {
+        return this.cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
     }
 };
 
