@@ -6,8 +6,8 @@ const app = {
     authMode: 'login', // 'login' or 'signup'
     currentView: 'home',
 
-    init() {
-        this.fetchProducts();
+    async init() {
+        await this.fetchProducts();
         this.hideLoader();
         this.updateCartCount();
         this.checkAuth();
@@ -65,6 +65,11 @@ const app = {
     },
 
     async fetchProducts() {
+        const container = document.getElementById('category-groups');
+        if (container && container.innerHTML === '') {
+            this.renderSkeletons();
+        }
+
         const sb = document.getElementById('searchBar');
         const cf = document.getElementById('categoryFilter');
         const lf = document.getElementById('locationFilter');
@@ -74,12 +79,23 @@ const app = {
         
         try {
             const res = await fetch(`${API_URL}/products?search=${search}&category=${category}&location=${location}`);
+            if (!res.ok) throw new Error('Network response was not ok');
             const products = await res.json();
             this.renderProducts(products);
             if (this.currentView === 'home') this.renderFeatured(products);
         } catch (err) {
             console.error('Fetch error:', err);
+            if (container) container.innerHTML = `<p style="text-align:center; padding: 2rem; color: var(--text-dim);">Error loading fresh produce. Please refresh the page. 🍃</p>`;
         }
+    },
+
+    renderSkeletons() {
+        const container = document.getElementById('category-groups');
+        if (!container) return;
+        let skeletonHtml = '<div class="product-grid" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 2rem; margin-top: 2rem;">';
+        for (let i = 0; i < 8; i++) skeletonHtml += '<div class="skeleton-card"></div>';
+        skeletonHtml += '</div>';
+        container.innerHTML = skeletonHtml;
     },
 
     renderProducts(products) {
@@ -122,7 +138,7 @@ const app = {
                     <span class="organic-badge">Organic</span>
                     ${isLive ? '<span class="live-badge">● Live</span>' : ''}
                 </div>
-                <img src="${p.imageUrl}" class="product-img" alt="${p.name}" onerror="this.src='https://images.unsplash.com/photo-1610348725531-843dff563e2c?w=500'">
+                <img src="${p.imageUrl}" class="product-img" alt="${p.name}" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1610348725531-843dff563e2c?w=500'">
                 <div class="product-info">
                     <h3>${p.name}</h3>
                     <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 0.8rem;">
