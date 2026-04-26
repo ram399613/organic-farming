@@ -266,22 +266,32 @@ const app = {
                 if (this.user.role === 'farmer') this.navigate('farmer');
                 if (this.user.role === 'admin') this.navigate('admin');
             } else {
-                // If user doesn't exist during login, help them register
-                if (this.authMode === 'login' && data.message.toLowerCase().includes('credential')) {
-                    this.showToast("Account not found. Let's create one for you!");
-                    this.toggleAuthMode();
-                    // Pre-fill fields if possible (confirm pass is same as pass for ease)
-                    document.getElementById('auth-confirm-pass').value = pass;
-                } else {
-                    this.showToast(data.message || "Auth failed");
-                }
+                this.showToast(data.message || "Auth failed");
+                btn.disabled = false;
+                btn.innerText = (this.authMode === 'login') ? 'Sign In' : 'Create Account';
             }
         } catch (err) {
             this.showToast("Connection error. Is the server running?");
-        } finally {
             btn.disabled = false;
             btn.innerText = (this.authMode === 'login') ? 'Sign In' : 'Create Account';
         }
+    },
+
+    readFullStory(title, img, text) {
+        const modal = document.createElement('div');
+        modal.className = 'modal active reveal';
+        modal.style.zIndex = '7000';
+        modal.innerHTML = `
+            <div class="modal-content auth-card" style="max-width: 800px; padding: 0; overflow: hidden; border-color: var(--primary);">
+                <img src="${img}" style="width: 100%; height: 350px; object-fit: cover;">
+                <div style="padding: 3rem;">
+                    <h1 style="color: var(--primary); margin-bottom: 1.5rem; font-size: 2.5rem;">${title}</h1>
+                    <div style="color: var(--text-dim); line-height: 2; font-size: 1.1rem; white-space: pre-line;">${text}</div>
+                    <button class="btn-primary" style="margin-top: 3rem; width: 100%;" onclick="this.parentElement.parentElement.parentElement.remove()">Close Story</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
     },
 
     handleFarmerSignup(e) {
