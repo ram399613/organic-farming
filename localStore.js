@@ -66,9 +66,9 @@ class LocalStore {
 
     init() {
         this.users = [
-            { _id: 'admin_1', name: 'Platform Admin', email: 'admin@organic.com', password: 'password', role: 'admin', isApproved: true },
-            { _id: 'farmer_1', name: 'Green Valley Farms', email: 'farmer@organic.com', password: 'password', role: 'farmer', isApproved: true, location: 'Himachal Pradesh' },
-            { _id: 'user_1', name: 'John Buyer', email: 'user@organic.com', password: 'password', role: 'user', isApproved: true }
+            { _id: 'admin_1', name: 'Platform Admin', email: 'admin@organic.com', password: bcrypt.hashSync('password', 8), role: 'admin', isApproved: true },
+            { _id: 'farmer_1', name: 'Green Valley Farms', email: 'farmer@organic.com', password: bcrypt.hashSync('password', 8), role: 'farmer', isApproved: true, location: 'Himachal Pradesh' },
+            { _id: 'user_1', name: 'John Buyer', email: 'user@organic.com', password: bcrypt.hashSync('password', 8), role: 'user', isApproved: true }
         ];
 
         let pCount = 0;
