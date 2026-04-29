@@ -36,24 +36,40 @@ const app = {
             const savedUser = JSON.parse(localStorage.getItem('user'));
             if (savedUser) {
                 this.user = savedUser;
-                this.updateAuthUI();
             }
         }
+        this.updateAuthUI();
     },
 
     updateAuthUI() {
         const btn = document.getElementById('auth-btn');
+        const nav = document.querySelector('nav.glass-nav');
+        const footer = document.querySelector('footer.premium-footer');
+        const chatTrigger = document.getElementById('chatbot-trigger');
+        
         if (this.user) {
-            btn.innerText = `Dashboard`;
-            btn.onclick = () => this.navigate('dashboard');
+            if (nav) nav.style.display = '';
+            if (footer) footer.style.display = '';
+            if (chatTrigger) chatTrigger.style.display = '';
+            
+            if (btn) {
+                btn.innerText = `Dashboard`;
+                btn.onclick = () => this.navigate('dashboard');
+            }
             
             // Auto-redirect if on login page
-            if (this.currentView === 'login') {
+            if (this.currentView === 'login' || this.currentView === 'signup') {
                 this.navigate('home');
             }
         } else {
-            btn.innerText = 'Sign In';
-            btn.onclick = () => this.navigate('login');
+            if (nav) nav.style.display = 'none';
+            if (footer) footer.style.display = 'none';
+            if (chatTrigger) chatTrigger.style.display = 'none';
+            
+            if (btn) {
+                btn.innerText = 'Sign In';
+                btn.onclick = () => this.navigate('login');
+            }
         }
     },
 
