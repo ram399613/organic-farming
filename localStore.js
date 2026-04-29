@@ -127,6 +127,10 @@ class LocalStore {
         return order;
     }
 
+    async getOrdersByUser(userId, role) {
+        return this.orders.filter(o => o.userId === userId);
+    }
+
     async approveFarmer(id) {
         const user = this.users.find(u => u._id === id);
         if (user) user.isApproved = true;

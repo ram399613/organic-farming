@@ -27,6 +27,7 @@
                 <li><a href="#" id="link-education" onclick="app.navigate('education')">Learning</a></li>
                 <li><a href="#" id="link-contact" onclick="app.navigate('contact')">Contact</a></li>
                 <li><a href="#" id="link-farmer" onclick="app.navigate('farmer')">Farmer Portal</a></li>
+                <li><a href="#" id="link-dashboard" onclick="app.navigate('dashboard')" style="display: none;">Dashboard</a></li>
             </ul>
             <div class="nav-actions">
                 <div class="cart-icon" onclick="app.toggleCart()">
@@ -38,8 +39,48 @@
     </nav>
 
     <main>
+        <!-- LOGIN VIEW -->
+        <div id="login-view" class="view-section" style="display: none;">
+            <div class="container" style="padding: 120px 20px; display: flex; justify-content: center; align-items: center; min-height: 80vh;">
+                <div class="auth-card" style="width: 100%; max-width: 450px;">
+                    <h2 id="auth-title" class="category-title" style="margin-bottom: 1.5rem; text-align: center;">Sign In</h2>
+                    <form onsubmit="app.handleAuth(event)">
+                        <div class="input-group"><label>Email</label><input type="email" id="auth-email"
+                                placeholder="nature@organic.com" required></div>
+                        <div class="input-group"><label>Password</label><input type="password" id="auth-pass"
+                                placeholder="••••••••" required></div>
+                        <div id="confirm-pass-group" class="input-group" style="display: none;">
+                            <label>Confirm Password</label>
+                            <input type="password" id="auth-confirm-pass" placeholder="••••••••">
+                        </div>
+                        <div id="role-select" class="input-group" style="display: none;">
+                            <label>Join as</label>
+                            <select id="auth-role">
+                                <option value="user">Organic Buyer</option>
+                                <option value="farmer">Passionate Farmer</option>
+                            </select>
+                        </div>
+                        <div class="auth-options"
+                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; font-size: 0.9rem;">
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                                <input type="checkbox" id="remember-me"> Remember me
+                            </label>
+                            <a href="#" style="color: var(--primary); text-decoration: none;">Forgot password?</a>
+                        </div>
+                        <button type="submit" id="auth-submit-btn" class="btn-primary"
+                            style="width: 100%;">Continue</button>
+                    </form>
+                    <p style="margin-top: 1.5rem; text-align: center; color: var(--text-dim);"
+                        onclick="app.toggleAuthMode()">
+                        <span id="auth-toggle-text">Don't have an account?</span>
+                        <span style="color: var(--primary); cursor: pointer; font-weight: 600;">Switch here</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+
         <!-- HOME VIEW -->
-        <div id="home-view" class="view-section">
+        <div id="home-view" class="view-section" style="display: none;">
             <div class="edu-background">
                 <div class="edu-overlay">
                     <div class="edu-card reveal">
@@ -440,6 +481,59 @@
                 </div>
             </div>
         </div>
+        <!-- DASHBOARD VIEW -->
+        <div id="dashboard-view" class="view-section" style="display: none;">
+            <div class="container" style="padding-top: 120px; padding-bottom: 80px;">
+                <div class="dashboard-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                    <h1 class="category-title" style="margin: 0;">My Dashboard</h1>
+                    <button class="btn-outline" onclick="app.handleLogout()">Sign Out</button>
+                </div>
+                
+                <div class="dashboard-grid" style="display: grid; grid-template-columns: 1fr 2fr; gap: 2rem;">
+                    <div style="display: flex; flex-direction: column; gap: 2rem;">
+                        <div class="auth-card">
+                            <h3>User Profile</h3>
+                            <div style="margin-top: 1rem; color: var(--text-dim);">
+                                <p><strong>Name:</strong> <span id="dash-name">User</span></p>
+                                <p><strong>Email:</strong> <span id="dash-email">email@example.com</span></p>
+                                <p><strong>Role:</strong> <span id="dash-role">Buyer</span></p>
+                            </div>
+                        </div>
+                        
+                        <div class="auth-card">
+                            <h3>Account Settings</h3>
+                            <div style="margin-top: 1rem;">
+                                <label style="display: block; margin-bottom: 0.5rem; color: var(--text-dim);">Notifications</label>
+                                <select style="width: 100%; padding: 0.5rem; margin-bottom: 1rem; background: var(--bg); border: 1px solid var(--glass-border); color: var(--text); border-radius: var(--radius-sm);">
+                                    <option>Email & SMS</option>
+                                    <option>Email Only</option>
+                                    <option>None</option>
+                                </select>
+                                <button class="btn-primary" style="width: 100%;" onclick="app.showToast('Settings saved!')">Save Settings</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 2rem;">
+                        <div class="auth-card">
+                            <h3>Cart Summary</h3>
+                            <div id="dash-cart-summary" style="margin-top: 1rem; color: var(--text-dim);">
+                                Your basket is empty.
+                            </div>
+                            <button class="btn-outline" style="margin-top: 1rem; width: 100%;" onclick="app.toggleCart()">View Basket</button>
+                        </div>
+                        
+                        <div class="auth-card">
+                            <h3>My Orders & Recent Activity</h3>
+                            <div id="dash-orders" style="margin-top: 1rem;">
+                                <p style="color: var(--text-dim);">No recent orders found.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </main>
 
     <!-- FOOTER -->
@@ -497,45 +591,6 @@
             </div>
         </div>
     </footer>
-
-        <!-- MODALS -->
-        <div id="login-modal" class="modal" style="display: none;">
-            <div class="modal-content auth-card">
-                <button class="close-btn" onclick="app.closeLogin()">×</button>
-                <h2 id="auth-title">Sign In</h2>
-                <form onsubmit="app.handleAuth(event)">
-                    <div class="input-group"><label>Email</label><input type="email" id="auth-email"
-                            placeholder="nature@organic.com" required></div>
-                    <div class="input-group"><label>Password</label><input type="password" id="auth-pass"
-                            placeholder="••••••••" required></div>
-                    <div id="confirm-pass-group" class="input-group" style="display: none;">
-                        <label>Confirm Password</label>
-                        <input type="password" id="auth-confirm-pass" placeholder="••••••••">
-                    </div>
-                    <div id="role-select" class="input-group" style="display: none;">
-                        <label>Join as</label>
-                        <select id="auth-role">
-                            <option value="user">Organic Buyer</option>
-                            <option value="farmer">Passionate Farmer</option>
-                        </select>
-                    </div>
-                    <div class="auth-options"
-                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; font-size: 0.9rem;">
-                        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
-                            <input type="checkbox" id="remember-me"> Remember me
-                        </label>
-                        <a href="#" style="color: var(--primary); text-decoration: none;">Forgot password?</a>
-                    </div>
-                    <button type="submit" id="auth-submit-btn" class="btn-primary"
-                        style="width: 100%;">Continue</button>
-                </form>
-                <p style="margin-top: 1.5rem; text-align: center; color: var(--text-dim);"
-                    onclick="app.toggleAuthMode()">
-                    <span id="auth-toggle-text">Don't have an account?</span>
-                    <span style="color: var(--primary); cursor: pointer; font-weight: 600;">Switch here</span>
-                </p>
-            </div>
-        </div>
 
         <!-- CART SIDEBAR -->
         <div id="cart-sidebar" class="sidebar" style="display: none;">

@@ -12,7 +12,11 @@ const app = {
         this.updateCartCount();
         this.checkAuth();
         window.addEventListener('scroll', () => this.revealOnScroll());
-        this.navigate('home');
+        if (!this.user) {
+            this.navigate('login');
+        } else {
+            this.navigate('home');
+        }
     },
 
     hideLoader() {
@@ -40,14 +44,12 @@ const app = {
     updateAuthUI() {
         const btn = document.getElementById('auth-btn');
         if (this.user) {
-            btn.innerText = `Hi, ${this.user.name.split(' ')[0]}`;
-            btn.onclick = () => {
-                if (confirm("Do you want to sign out?")) this.handleLogout();
-            };
+            btn.innerText = `Dashboard`;
+            btn.onclick = () => this.navigate('dashboard');
             
             // Auto-redirect if on login page
             if (this.currentView === 'login') {
-                this.navigate(this.user.role === 'farmer' ? 'farmer' : 'home');
+                this.navigate('home');
             }
         } else {
             btn.innerText = 'Sign In';
@@ -60,7 +62,7 @@ const app = {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
         this.updateAuthUI();
-        this.navigate('home');
+        this.navigate('login');
         this.showToast("Signed out successfully");
     },
 
@@ -154,12 +156,17 @@ const app = {
     },
 
     navigate(view) {
+        if (!this.user && view !== 'login' && view !== 'signup') {
+            if (view !== 'home') this.showToast("Please sign in to access the platform");
+            return this.navigate('login');
+        }
+
         if (view === 'login' && this.user) {
             return this.navigate(this.user.role === 'farmer' ? 'farmer' : 'home');
         }
 
         this.currentView = view;
-        const views = ['home', 'market', 'education', 'contact', 'shipping', 'privacy', 'blog', 'farmer', 'admin'];
+        const views = ['home', 'market', 'education', 'contact', 'shipping', 'privacy', 'blog', 'farmer', 'admin', 'login', 'dashboard'];
         
         views.forEach(v => {
             const el = document.getElementById(`${v}-view`);
@@ -175,12 +182,6 @@ const app = {
         }
 
         if (view === 'farmer') {
-            if (!this.user) {
-                this.openLogin();
-                this.showToast("Please sign in to access the Farmer Portal");
-                this.navigate('home');
-                return;
-            }
             if (this.user.role !== 'farmer') {
                 this.showToast("Farmer Portal is reserved for our certified partners.");
                 this.navigate('home');
@@ -190,7 +191,9 @@ const app = {
             document.getElementById('farmer-onboarding').style.display = this.user.isApproved ? 'none' : 'block';
         }
 
-        if (view === 'login') this.openLogin();
+        if (view === 'dashboard') {
+            this.renderDashboard();
+        }
         
         window.scrollTo({ top: 0, behavior: 'smooth' });
         setTimeout(() => this.revealOnScroll(), 100);
@@ -213,12 +216,61 @@ const app = {
         }
     },
 
-    openLogin() {
-        document.getElementById('login-modal').style.display = 'flex';
-    },
+    async renderDashboard() {
+        if (!this.user) return;
+        
+        const nameEl = document.getElementById('dash-name');
+        const emailEl = document.getElementById('dash-email');
+        const roleEl = document.getElementById('dash-role');
+        
+        if (nameEl) nameEl.innerText = this.user.name;
+        if (emailEl) emailEl.innerText = this.user.email;
+        if (roleEl) roleEl.innerText = this.user.role.charAt(0).toUpperCase() + this.user.role.slice(1);
+        
+        const cartSummary = document.getElementById('dash-cart-summary');
+        if (cartSummary) {
+            if (this.cart.length === 0) {
+                cartSummary.innerHTML = '<p>Your basket is empty.</p>';
+            } else {
+                cartSummary.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span>Items:</span> <strong>${this.cart.reduce((sum, item) => sum + item.qty, 0)}</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span>Total:</span> <strong>₹${this.calculateTotal()}</strong>
+                    </div>
+                `;
+            }
+        }
 
-    closeLogin() {
-        document.getElementById('login-modal').style.display = 'none';
+        try {
+            const res = await fetch(`${API_URL}/orders`, {
+                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+            });
+            if (res.ok) {
+                const orders = await res.json();
+                const ordersList = document.getElementById('dash-orders');
+                if (ordersList) {
+                    if (orders.length === 0) {
+                        ordersList.innerHTML = '<p style="color: var(--text-dim);">No recent orders found.</p>';
+                    } else {
+                        ordersList.innerHTML = orders.map(o => `
+                            <div style="padding: 1rem; border: 1px solid var(--glass-border); border-radius: var(--radius-sm); margin-bottom: 1rem;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                    <strong>Order #${o._id.substring(0, 8)}</strong>
+                                    <span style="color: var(--primary);">₹${o.totalAmount}</span>
+                                </div>
+                                <small style="color: var(--text-dim);">${new Date(o.createdAt).toLocaleDateString()}</small>
+                            </div>
+                        `).join('');
+                    }
+                }
+            } else if (res.status === 401 || res.status === 403) {
+                this.handleLogout();
+            }
+        } catch (err) {
+            console.error("Dashboard fetch error:", err);
+        }
     },
 
     toggleAuthMode() {
@@ -261,10 +313,10 @@ const app = {
                 localStorage.setItem('token', data.token);
                 localStorage.setItem('user', JSON.stringify(data.user));
                 this.updateAuthUI();
-                this.closeLogin();
                 this.showToast(`Welcome to the hub, ${this.user.name}! 🌱`);
                 if (this.user.role === 'farmer') this.navigate('farmer');
-                if (this.user.role === 'admin') this.navigate('admin');
+                else if (this.user.role === 'admin') this.navigate('admin');
+                else this.navigate('home');
             } else {
                 this.showToast(data.message || "Auth failed");
                 btn.disabled = false;
@@ -363,6 +415,10 @@ const app = {
     },
 
     toggleCart() {
+        if (!this.user) {
+            this.showToast("Please sign in to view your cart");
+            return this.navigate('login');
+        }
         const sidebar = document.getElementById('cart-sidebar');
         if (!sidebar) return;
         const isHidden = sidebar.style.display === 'none' || !sidebar.style.display;
@@ -490,7 +546,11 @@ const app = {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
                 },
-                body: JSON.stringify({ items: this.cart, total: this.calculateTotal() })
+                body: JSON.stringify({ 
+                    products: this.cart.map(item => ({ product: item.id, quantity: item.qty })), 
+                    totalAmount: this.calculateTotal(),
+                    paymentMethod: 'Card'
+                })
             });
 
             if (res.ok) {
@@ -507,10 +567,12 @@ const app = {
                         <div style="font-size: 4rem; margin-bottom: 1rem;">✅</div>
                         <h2>Harvest Confirmed!</h2>
                         <p style="color: var(--text-dim); margin-top: 1rem;">Your organic order has been received. Our farmers are already picking the freshest items for you.</p>
-                        <button class="btn-primary" style="margin-top: 2rem; width: 100%;" onclick="this.parentElement.parentElement.remove()">Continue Shopping</button>
+                        <button class="btn-primary" style="margin-top: 2rem; width: 100%;" onclick="this.parentElement.parentElement.remove(); app.navigate('dashboard');">View Orders</button>
                     </div>
                 `;
                 document.body.appendChild(overlay);
+            } else {
+                this.showToast("Failed to place order. Please try again.");
             }
         } catch (err) { this.showToast("Failed to place order"); }
     },
