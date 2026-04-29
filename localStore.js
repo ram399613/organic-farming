@@ -108,7 +108,32 @@ class LocalStore {
         return res;
     }
 
+    async getProductById(id) {
+        return this.products.find(p => p._id === id);
+    }
+
+    async createProduct(p) {
+        const product = { ...p, _id: 'p' + Date.now() };
+        this.products.push(product);
+        return product;
+    }
+
+    async updateProduct(id, data, farmerId) {
+        const index = this.products.findIndex(p => p._id === id && p.farmerId === farmerId);
+        if (index === -1) throw new Error('Product not found or unauthorized');
+        this.products[index] = { ...this.products[index], ...data };
+        return this.products[index];
+    }
+
+    async deleteProduct(id, farmerId) {
+        const index = this.products.findIndex(p => p._id === id && p.farmerId === farmerId);
+        if (index === -1) throw new Error('Product not found or unauthorized');
+        this.products.splice(index, 1);
+        return true;
+    }
+
     async findUserByEmail(e) { return this.users.find(u => u.email === e); }
+    async findUserById(id) { return this.users.find(u => u._id === id); }
     
     async registerUser(userData) {
         const newUser = { 

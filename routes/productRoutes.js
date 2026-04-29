@@ -36,5 +36,24 @@ router.post('/', protect, authorize('farmer', 'admin'), async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
+// Update product
+router.put('/:id', protect, authorize('farmer', 'admin'), async (req, res) => {
+  try {
+    const product = await localStore.updateProduct(req.params.id, req.body, req.user._id);
+    res.json(product);
+  } catch (error) {
+    res.status(403).json({ message: error.message });
+  }
+});
+
+// Delete product
+router.delete('/:id', protect, authorize('farmer', 'admin'), async (req, res) => {
+  try {
+    await localStore.deleteProduct(req.params.id, req.user._id);
+    res.json({ message: 'Product deleted successfully' });
+  } catch (error) {
+    res.status(403).json({ message: error.message });
+  }
+});
 
 module.exports = router;
