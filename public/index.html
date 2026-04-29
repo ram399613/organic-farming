@@ -17,7 +17,7 @@
     </div>
     <div id="toast-container"></div>
 
-    <nav class="glass-nav">
+    <nav class="glass-nav" style="display: none;">
         <div class="nav-container">
             <a href="#" class="logo" onclick="app.navigate('home')">Organic Farming Hub</a>
             <ul class="nav-links">
@@ -40,7 +40,7 @@
 
     <main>
         <!-- LOGIN VIEW -->
-        <div id="login-view" class="view-section" style="display: none;">
+        <div id="login-view" class="view-section" style="display: block;">
             <div class="container" style="padding: 120px 20px; display: flex; justify-content: center; align-items: center; min-height: 80vh;">
                 <div class="auth-card" style="width: 100%; max-width: 450px;">
                     <h2 id="auth-title" class="category-title" style="margin-bottom: 1.5rem; text-align: center;">Sign In</h2>
@@ -537,7 +537,7 @@
     </main>
 
     <!-- FOOTER -->
-    <footer class="premium-footer">
+    <footer class="premium-footer" style="display: none;">
         <div class="container">
             <div class="footer-grid">
                 <div class="footer-brand">
@@ -605,7 +605,7 @@
         </div>
 
     <!-- CHATBOT -->
-    <div id="chatbot-trigger" onclick="app.toggleChat()"><span class="chat-icon">💬</span></div>
+    <div id="chatbot-trigger" onclick="app.toggleChat()" style="display: none;"><span class="chat-icon">💬</span></div>
     <div id="chatbot-window" style="display: none;">
         <div class="chat-header">
             <div>
