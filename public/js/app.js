@@ -198,13 +198,10 @@ const app = {
         }
 
         if (view === 'farmer') {
-            if (this.user.role !== 'farmer') {
-                this.showToast("Farmer Portal is reserved for our certified partners.");
-                this.navigate('home');
-                return;
-            }
-            document.getElementById('farmer-dashboard').style.display = this.user.isApproved ? 'block' : 'none';
-            document.getElementById('farmer-onboarding').style.display = this.user.isApproved ? 'none' : 'block';
+            const isFarmer = this.user && this.user.role === 'farmer';
+            const isApproved = isFarmer && this.user.isApproved;
+            document.getElementById('farmer-dashboard').style.display = isApproved ? 'block' : 'none';
+            document.getElementById('farmer-onboarding').style.display = isApproved ? 'none' : 'block';
         }
 
         if (view === 'dashboard') {
